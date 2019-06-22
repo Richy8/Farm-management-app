@@ -1,0 +1,480 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import store with context %}
+
+{% block sidenav %}
+{{ store() }}
+{% endblock sidenav %}
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title mt-2">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Store Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-2 z-depth-1">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="title mt-2">
+                    <h5 class="elegant-ic" style="font-size: 0.9375rem">Farm Purchases..</h5>
+                </div>
+                <div class="newpurchase">
+                    <button class="btn btn-md teal white-ic px-3 py-2 text-capitalize" data-toggle="modal" data-target="#addPurchases"
+                        style="border-radius: 10px; font-size: 0.6875rem;"><i class="fas fa-plus"></i>&nbsp;New Non-Feed Purchase</button>
+                </div>
+            </div>
+            <div class="mt-1 pt-2 border-top">
+                <div class="info font-small blue-grey-text pb-2 w-75" style="font-size: 0.8125rem">Below are the different types of purchases in the
+                    database..
+                </div>
+                <div class="d-flex justify-content-around align-items-center flex-wrap">
+
+                    <div class="vendors wow bounceIn">
+                        <a href="{{ url_for('stores.store_purchases', purchase='feed_purchase') }}">
+                            <button class="btn btn-md white-ic deep-orange" style="font-size: 0.625rem"> Feed Purchases
+                            </button></a>
+                    </div>
+                    <div class="vendors wow bounceIn">
+                        <a href="{{ url_for('stores.store_purchases', purchase='non_feed_purchase') }}">
+                            <button class="btn btn-md white-ic indigo" style="font-size: 0.625rem"> Non-Feed Purchases
+                            </button></a>
+                    </div>
+                    <!-- <div class="blue-grey-text font-small">No Feed item yet!</div> -->
+                </div>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 white py-3 mt-3 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+
+                <div class="inner-row d-flex justify-content-between bg-success px-2 py-1">
+                    <div class="item-title d-flex align-items-center">
+                        <h6 class="white-text pt-2" style="font-size: 0.8125rem">Vendor (
+                            {% if request.args.get('month') == None %} 
+                                {{ nf_purchase_month[-1] | numberMonth }}
+                            {% else %}
+                                {{ request.args.get('month') | numberMonth }}
+                            {% endif %}
+                            Non-Feed Purchases )</h6>
+                    </div>
+                </div>
+                <!-- Inner Row 1 -->
+
+                <!-- Inner Row 2 -->
+                <div class="filter mt-2 px-2 d-flex justify-content-between align-items-center flex-wrap">
+                    <form action="" method='POST' class="form-inline">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <label for="" class="blue-grey-text" style="font-size:0.875rem;">Filter By:</label>
+                            &nbsp;
+                            <input type="hidden" name="check" value="gobutton_nf">
+                            <!-- Month -->
+                            <select name="month" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled style="font-size:0.6875rem">-- Month --</option>
+                                {% if nf_purchase_month %}
+                                    {% for month in nf_purchase_month %}
+                                    <option value="{{ month }}" style="font-size:0.6875rem"> &nbsp;&nbsp; {{ month | numberMonth }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                {% endif %}
+                            </select>
+                            <!-- Month -->
+                            &nbsp;
+                            <!-- Year -->
+                            <select name="year" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled style="font-size:0.6875rem">-- Year --</option>
+                                {% if nf_purchase_year %}
+                                    {% for year in nf_purchase_year %}
+                                    <option value="{{ year }}" style="font-size:0.6875rem"> &nbsp;&nbsp; {{ year }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                {% endif %}
+                            </select>
+                            <!-- Year -->
+                            &nbsp;
+                            <!-- Go -->
+                            <input type="submit" class="form-control bg-info white-ic w-auto"
+                                style="font-size:0.7813rem;" value="GO">
+                        </div>
+                    </form>
+                     
+                    &nbsp;&nbsp;
+
+                    <div class="d-flex justify-content-end align-items-center flex-wrap">
+                        <form action="" method="post" class="form-inline">
+                            {{ form.csrf_token }}
+                            <div class="d-flex justify-content-around align-items-center">
+                                <input type="hidden" name="check" value="nf_vendor_search">
+                                <select name="nf_vendor_select" id="" class="form-control" required>
+                                    <option value="">-- Vendor --</option>
+                                    {% if vendors_list %}
+                                    {% for vendor in vendors_list %}
+                                        <option value="{{ vendor.id }}">&nbsp;&nbsp; {{ vendor.vendor }}</option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                                &nbsp; 
+                                <!-- Go -->
+                                <input type="submit" class="form-control bg-info white-ic w-auto"
+                                style="font-size:0.6875rem;" value="GO">
+                            </div>
+                        </form>
+
+                        &nbsp;&nbsp;
+
+                        <form action="" method="post" class="form-inline">
+                            {{ form.csrf_token }}
+                            <div class="d-flex justify-content-around align-items-center">
+                                <input type="hidden" name="check" value="nf_farmitem_search">
+                                <select name="nf_farmitem_select" id="" class="form-control" required>
+                                    <option value="">-- farmitem --</option>
+                                    {% if farmitem_list %}
+                                    {% for item in farmitem_list %}
+                                        <option value="{{ item.id }}">&nbsp;&nbsp; {{ item.item }}</option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                                &nbsp; 
+                                <!-- Go -->
+                                <input type="submit" class="form-control bg-info white-ic w-auto"
+                                style="font-size:0.6875rem;" value="GO">
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+                <!-- Inner Row 2 -->
+
+                <!-- Table Row -->
+                <div class="px-2 mt-3">
+                    <table class="table w-100 table-responsive table-hover table-responsive table-striped" id="table"
+                        style="overflow: auto;">
+                        <thead class="black-text grey lighten-1">
+                            <th class="font-weight-bold" width="240px" style="min-width:120px; font-size: 0.7188rem">Date</th>
+                            <th class="font-weight-bold" width="300px" style="min-width:200px; font-size: 0.7188rem">Vendor</th>
+                            <th class="font-weight-bold" width="230px" style="min-width:110px; font-size: 0.7188rem">Item</th>
+                            <th class="font-weight-bold" width="180px" style="min-width:80px; font-size: 0.7188rem">Qty</th>
+                            <th class="font-weight-bold" width="120px" style="min-width:80px; font-size: 0.7188rem">Price (&#8358;)</th>
+                            <th class="font-weight-bold" width="80px" style="min-width:80px; font-size: 0.7188rem">Edit</th>
+                        </thead>
+                        <tbody>
+
+                            <!-- Load Venddor Details -->
+                            {% if farmitem_purchased %}
+                            {% for farm in farmitem_purchased.items %}
+                            <tr>
+                                <td style="font-size: 0.8125rem">{{ farm.date }}</td>
+                                <td style="font-size: 0.8125rem">{{ farm.vendor.vendor }}</td>
+                                <td style="font-size: 0.8125rem">{{ farm.farmitem.item }}</td>
+                                <td style="font-size: 0.8125rem">{{ farm.v_qty }}</td>
+                                <td style="font-size: 0.8125rem">{{ farm.v_price }}</td>
+                                <td>
+                                    <a href="javascript: void(0)" class="bg-success white-text px-2 py-1 editNonFeed" id="{{ farm.id }}"
+                                        style="font-size: 0.8125rem; border-radius: 0.3125rem; cursor: pointer"
+                                        data-toggle="modal" data-target="#editPurchases">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center teal-text">No data</td>
+                            </tr>
+                            {% endif %}
+
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    {% if farmitem_purchased %}
+                    <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                        <ul class="pagination">
+
+                            {% if farmitem_purchased.has_prev %}
+                                <li class="page-item">
+                                    <a href="{{ url_for('stores.store_purchases', purchase='non_feed_purchase', month=request.args.get('month'), year=request.args.get('year'), page=farmitem_purchased.prev_num) }}" class="page-link teal-text">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a href="" class="page-link text-muted">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                           {% for page_num in farmitem_purchased.iter_pages()  %}
+                           {% if page_num %}
+                            {% if farmitem_purchased.page == page_num %}
+                                <li class=" page-item"><a href="{{ url_for('stores.store_purchases', purchase='non_feed_purchase', month=request.args.get('month'), year=request.args.get('year'), page=page_num) }}" class="page-link white-text border teal" style="font-size:10px;">{{ page_num }}</a></li>
+                                {% else %}
+                                <li class=" page-item"><a href="{{ url_for('stores.store_purchases', purchase='non_feed_purchase', month=request.args.get('month'), year=request.args.get('year'), page=page_num) }}" class="page-link teal-text border" style="font-size:10px;">{{ page_num }}</a></li>
+                                {% endif %}
+                            {% else %}
+                            ...
+                            {% endif %}
+                            {% endfor %}
+
+
+                            {% if farmitem_purchased.has_next %}
+                            <li class="page-item">
+                                <a href="{{ url_for('stores.store_purchases', purchase='non_feed_purchase', month=request.args.get('month'), year=request.args.get('year'),page=farmitem_purchased.next_num) }}" class="page-link teal-text">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a href="" class="page-link text-muted">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+
+                        </ul>
+                    </nav>  
+                    {% endif %}
+                    <!-- Pagination -->
+
+
+                </div>
+                <!-- Table Row -->
+            </div>
+
+        </div>
+        <!-- Second Row -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+{% block modal %}
+<!-- ADD PURCHASES -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addPurchases" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                            style="font-size: 0.875rem">New Non-Feed Purchases
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter details of
+                                purchased non-feed item below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 newPurchase">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="add_farmitem_purchase">
+
+                                <!-- Venddor -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Vendor</span>
+                                    <select name="nf_vendor_id" class="custom-select" required id="">
+                                        <option value="" disabled selected>Select Vendor </option> 
+                                        {% if vendors_list %}
+                                        {% for vendor in vendors_list %}
+                                        <option value="{{ vendor.id }}">{{ vendor.vendor }}</option>
+                                        {% endfor %}
+                                        {% else %}
+                                        <option value="">No Vendor</option>
+                                        {% endif %}
+
+                                    </select>
+                                </div>
+
+
+                                <!-- Farm Item -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Farm Item</span>
+                                    <select name="nf_farmitem_id" class="custom-select" required id="">
+                                        <option value="" disabled selected>Select Farm Item</option>
+                                        {% if farmitem_list %}
+                                        {% for farmitem in farmitem_list %}
+                                        <option value="{{ farmitem.id }}">{{ farmitem.item }}</option>
+                                        {% endfor %}
+                                        {% else %}
+                                        <option value="">No farmitem</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+
+
+                                <!-- Item Quantity -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Item Quantity</span>
+                                    <input type="number" name="nf_farmitem_qty" step="0.01" required class="form-control" placeholder="Enter Item Quantity">
+                                </div>
+
+
+                                <!-- Item Price -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Item Price</span>
+                                    <input type="number" name="nf_farmitem_price" step="0.01" required class="form-control" placeholder="Enter Item Price">
+                                </div>
+
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">ADD
+                                        PURCHASE</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ADD PURCHASES -->
+
+<!-- UPDATE PURCHASES -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="editPurchases" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Update Farm Purchases
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter updated details of
+                                purchased farm item below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 updatePurchase">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="update_farmitem">
+                                <input type="hidden" name="farm_id" id="updateFarmId">
+    
+                                <!-- Venddor -->
+                                <div class="form-group">
+                                        <span class="font-small blue-grey-text">Vendor</span>
+                                        <select name="vendor_update_id" class="custom-select" id="vendorName" required>
+                                            <option value="" disabled selected>Select Vendor </option> 
+                                            {% if vendors_list %}
+                                            {% for vendor in vendors_list %}
+                                            <option value="{{ vendor.id }}">{{ vendor.vendor }}</option>
+                                            {% endfor %}
+                                            {% else %}
+                                            <option value="">No Vendor</option>
+                                            {% endif %}
+    
+                                        </select>
+                                    </div>
+    
+    
+                                    <!-- Farm Item -->
+                                    <div class="form-group">
+                                        <span class="font-small blue-grey-text">Farm Item</span>
+                                        <select name="farmitem_update_id" class="custom-select" id="farmitemName" required>
+                                            <option value="" disabled selected>Select Farm Item</option>
+                                            {% if farmitem_list %}
+                                            {% for farmitem in farmitem_list %}
+                                            <option value="{{ farmitem.id }}">{{ farmitem.item }}</option>
+                                            {% endfor %}
+                                            {% else %}
+                                            <option value="">No farmitem</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+    
+    
+                                    <!-- Item Quantity -->
+                                    <div class="form-group">
+                                        <span class="font-small blue-grey-text">Item Quantity</span>
+                                        <input type="number" name="nf_update_qty" step="0.01" required id="farmQty" class="form-control" placeholder="Enter Item Quantity">
+                                    </div>
+    
+    
+                                    <!-- Item Price -->
+                                    <div class="form-group">
+                                        <span class="font-small blue-grey-text">Item Price</span>
+                                        <input type="number" name="nf_update_price" step="0.01" required id="farmPrice" class="form-control" placeholder="Enter Item Price">
+                                    </div>
+    
+    
+                                    <!-- Submit -->
+                                    <div class="form-group">
+                                        <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                            id="submitButton">UPDATE
+                                            PURCHASE</button>
+                                    </div>
+    
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- UPDATE PURCHASES -->
+
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/store-purchases.js') }}"></script>
+{% endblock ajax %}

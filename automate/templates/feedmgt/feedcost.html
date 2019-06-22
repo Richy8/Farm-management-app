@@ -1,0 +1,251 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/fields.html" import render_form %}
+{% from "macros/sidenav.html" import feedmill with context %}
+
+{% block sidenav %}
+{{ feedmill() }}
+{% endblock sidenav %}
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to FeedMill Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1.0938rem">Feed Cost..</h5>
+            </div>
+
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Box -->
+        <div class="col-md-12 white py-2 mt-2 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+
+                <div id="accordion">
+                    <div class="inner-row d-flex justify-content-between bg-success px-2 py-1">
+                        <div class="item-title d-flex align-items-center">
+                            <h6 class="white-text pt-2" style="font-size: 0.925rem">Feed Produced (
+                                {% if request.args.get('month') == None %}
+                                    {{ cost_month[-1] | numberMonth }}
+                                {% else %}
+                                    {{ request.args.get('month') |numberMonth }}
+                                {% endif %}
+                            )</h6>
+                        </div>
+                        <a href="#collapseTwo" class="white-text border rounded-circle" data-toggle="collapse"
+                            style="min-width: 30px; height: 30px; position: relative"><i class="fas fa-caret-down"
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                    </div>
+                    <!-- Inner Row 1 -->
+
+                    <!-- Inner Row 2 -->
+                    <div class="filter mt-2 px-2 d-flex justify-content-between align-items-center flex-wrap">
+                        <form action="" method='POST' class="form-inline">
+                            <div class="d-flex justify-content-around align-items-center">
+                                <input type="hidden" name="check" value="gobutton">
+                                <label for="" class="blue-grey-text" style="font-size:0.875rem;">Filter By:</label>
+                                &nbsp;
+                                <!-- Month -->
+                                <select name="month" id="" class="form-control blue-grey-text">
+                                    <option value="" selected disabled style="font-size:0.6875rem">-- Month --</option>
+                                    {% if cost_month %}
+                                    {% for m in cost_month %}
+                                    <option value="{{ m }}" style="font-size:0.6875rem"> &nbsp;&nbsp; {{ m | numberMonth }}</option>
+                                    {% endfor %}
+                                    {% else %}
+                                    <option value="" disabled>No Month</option>
+                                    {% endif %}
+                                </select>
+                                <!-- Month -->
+                                &nbsp;
+                                <!-- Year -->
+                                <select name="year" id="" class="form-control blue-grey-text">
+                                    <option value="" selected disabled style="font-size:0.6875rem">-- Year --</option>
+                                    {% if cost_year %}
+                                    {% for y in cost_year %}
+                                    <option value="{{ y }}" style="font-size:0.6875rem"> &nbsp;&nbsp; {{ y }}</option>
+                                    {% endfor %}
+                                    {% else %}
+                                    <option value="" disabled>No Year</option>
+                                    {% endif %}
+                                </select>
+                                <!-- Year -->
+                                &nbsp;
+                                <!-- Go -->
+                                <input type="submit" class="form-control bg-info white-ic w-auto"
+                                    style="font-size:0.7813rem;" value="GO">
+                            </div>
+                        </form>
+                        
+                        &nbsp;&nbsp;
+
+                        <div class="d-flex justify-content-end align-items-center flex-wrap">
+                            <form action="" method="post" class="form-inline">
+                                <div class="d-flex justify-content-around align-items-center">
+                                    <input type="hidden" name="check" value="feedtype_search">
+                                    <select name="feedtype_select" id="" class="form-control">
+                                        <option value="">-- Feedtype --</option>
+                                        {% if feedtypes %}
+                                        {% for feed in feedtypes %}
+                                            <option value="{{ feed.id }}">&nbsp;&nbsp; {{ feed.type }}</option>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                    &nbsp; 
+                                    <!-- Go -->
+                                    <input type="submit" class="form-control bg-info white-ic w-auto"
+                                    style="font-size:0.6875rem;" value="GO">
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    <!-- Inner Row 2 -->
+
+                    <!-- Table Row -->
+                    <div class="px-2 mt-3 collapse show d-flex flex-center" id="collapseTwo" data-parent="#accordion">
+                        {% if feedcost %}
+                        <div>
+                            <table
+                                class="table table-responsive table-hover table-responsive table-striped w-100"
+                                id="table" style="overflow: auto;">
+                                <thead class="black-text grey">
+                                    <th width="30%" class="font-weight-bold" style="min-width:90px; font-size:0.7rem;">DATE</th>
+                                    <th width="60%" class="font-weight-bold" style="min-width:170px; font-size:0.7rem;">FEED TYPE</th>
+                                    <th width="120px" class="font-weight-bold" style="min-width:80px; font-size:0.7rem;">COST (&#8358;)</th>
+
+                                </thead>
+                                <tbody>
+                                    {% for feed in feedcost.items %}
+                                    <tr>
+                                        <td style="font-size:0.8125rem">{{ feed.date }}</td>
+                                        <td style="font-size:0.8125rem">{{ feed.feedtype.type | capitalize }}</td>
+                                        <td style="font-size:0.8125rem">{{ feed.price }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                            <!-- Pagination -->
+                            {% if feedcost %}
+                            <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                                <ul class="pagination">
+        
+                                    {% if feedcost.has_prev %}
+                                        <li class="page-item">
+                                            <a href="{{ url_for('feedmill.feedcost', month=request.args.get('month'), year=request.args.get('year'), page=feedcost.prev_num) }}" class="page-link teal-text">
+                                                <span aria-hidden="true">&laquo;</span>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a href="" class="page-link text-muted">
+                                                <span aria-hidden="true">&laquo;</span>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+        
+                                   {% for page_num in feedcost.iter_pages()  %}
+                                   {% if page_num %}
+                                    {% if feedcost.page == page_num %}
+                                        <li class=" page-item"><a href="{{ url_for('feedmill.feedcost', month=request.args.get('month'), year=request.args.get('year'), page=page_num) }}" class="page-link white-text border teal" style="font-size:10px;">{{ page_num }}</a></li>
+                                        {% else %}
+                                        <li class=" page-item"><a href="{{ url_for('feedmill.feedcost', month=request.args.get('month'), year=request.args.get('year'), page=page_num) }}" class="page-link teal-text border" style="font-size:10px;">{{ page_num }}</a></li>
+                                        {% endif %}
+                                    {% else %}
+                                    ...
+                                    {% endif %}
+                                    {% endfor %}
+        
+        
+                                    {% if feedcost.has_next %}
+                                    <li class="page-item">
+                                        <a href="{{ url_for('feedmill.feedcost', month=request.args.get('month'), year=request.args.get('year'), page=feedcost.next_num) }}" class="page-link teal-text">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a href="" class="page-link text-muted">
+                                                <span aria-hidden="true">&raquo;</span>
+                                                <span class="sr-only">Next</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+        
+        
+                                </ul>
+                            </nav>  
+                            {% endif %}
+                            <!-- Pagination -->
+
+                            {% else %}
+                            <div class="text-center my-2 teal-text font-small">No data yet!</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Table Row -->
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Second Box -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+
+{% block modal %}
+
+{% endblock modal %}

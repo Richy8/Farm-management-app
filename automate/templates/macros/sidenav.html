@@ -1,0 +1,131 @@
+<!-- Feedmill SideNav -->
+{% macro feedmill() %}
+<li><a href="{{ url_for('feedmill.feedoverview') }}" class="white-text"><i class="fas fa-tachometer-alt"></i> &nbsp;
+        Overview</a>
+</li>
+<li><a href="{{ url_for('feedmill.feedinventory') }}" class="white-text"><i class="fas fa-store"></i> &nbsp;
+        Inventory</a></li>
+<li><a href="{{ url_for('feedmill.feedproduction') }}" class="white-text"><i class="fas fa-industry"></i> &nbsp;
+        Production</a></li>
+<li><a href="{{ url_for('feedmill.feedtypes') }}" class="white-text"><i class="fas fa-boxes"></i> &nbsp; Feed Type</a>
+</li>
+<li><a href="{{ url_for('feedmill.feedcost') }}" class="white-text">&#8358; &nbsp; Feed Cost</a>
+</li>
+<li><a href="{{ url_for('users.notifications') }}" class="white-text"><i class="fas fa-bell"></i> &nbsp; Notifications</a> 
+        {% if current_user.role == 'Admin' %}
+                {% if all_activities %}
+                        <span class="badge badge-pill badge-warning">{{ all_activities | length }}</span> 
+                {% endif %}
+        {% else %}
+                {% if user_activities %}
+                        <span class="badge badge-pill badge-warning">{{ user_activities | length }}</span> 
+                {% endif %}
+        {% endif %}
+</li>
+
+{% if current_user.role == 'Admin' %}
+</li>
+<li><a href="{{ url_for('users.user') }}" class="white-text"><i class="fas fa-users"></i> &nbsp; Users mgt.</a>
+</li>
+{% endif %}
+
+<li style="position: absolute; top: 115%; border-width: 0px;"><a href="{{ url_for('users.portal') }}"
+        class="white-text"><i class="fas fa-arrow-left"></i>
+        &nbsp; Portal</a>
+</li>
+{% endmacro %}
+<!-- Feedmill SideNav -->
+
+<!-- Store SideNav -->
+{% macro store() %}
+<li><a href="{{ url_for('stores.store_overview') }}" class="white-text"><i class="fas fa-tachometer-alt"></i> &nbsp;
+        Overview</a>
+</li>
+<li><a href="{{ url_for('stores.store_vendors') }}" class="white-text"><i class="fas fa-users"></i> &nbsp;
+        Vendors</a></li>
+<li><a href="{{ url_for('stores.store_purchases', purchase='feed_purchase') }}" class="white-text">&#8358; &nbsp;
+        Purchases</a></li>
+<li><a href="{{ url_for('stores.store_stock') }}" class="white-text"><i class="fas fa-industry"></i> &nbsp;
+        Feed Stock</a></li>
+<li><a href="{{ url_for('stores.store_receivables') }}" class="white-text"><i class="fas fa-shopping-cart"></i> &nbsp;
+        Receivables</a></li>
+<li><a href="{{ url_for('users.notifications') }}" class="white-text"><i class="fas fa-bell"></i> &nbsp; Notifications</a> 
+        {% if current_user.role == 'Admin' %}
+                {% if all_activities %}
+                        <span class="badge badge-pill badge-warning">{{ all_activities | length }}</span> 
+                {% endif %}
+        {% else %}
+                {% if user_activities %}
+                        <span class="badge badge-pill badge-warning">{{ user_activities | length }}</span> 
+                {% endif %}
+        {% endif %}
+</li>
+
+{% if current_user.role == 'Admin' %}
+<li><a href="{{ url_for('users.user') }}" class="white-text"><i class="fas fa-users"></i> &nbsp; Users mgt.</a>
+</li>
+{% endif %}
+
+<li style="position: absolute; top: 115%; border-width: 0px;"><a href="{{ url_for('users.portal') }}"
+        class="white-text"><i class="fas fa-arrow-left"></i>
+        &nbsp; Portal</a>
+</li>
+{% endmacro %}
+<!-- Store SideNav -->
+
+<!-- Eggtore Sidenav -->
+{% macro eggstore() %}
+<li><a href="{{ url_for('stores.eggstore_overview') }}" class="white-text"><i class="fas fa-tachometer-alt"></i> &nbsp;
+        Overview</a>
+</li>
+<li><a href="{{ url_for('stores.eggstore_customers') }}" class="white-text"><i class="fas fa-users"></i> &nbsp;
+        Customers</a></li>
+<li><a href="{{ url_for('stores.eggstore_stock') }}" class="white-text"><i class="fas fa-users"></i> &nbsp;
+        Egg Stock</a></li>
+<li><a href="{{ url_for('stores.eggstore_supply') }}" class="white-text"><i class="fas fa-industry"></i> &nbsp;
+        Egg Supply</a></li>
+<li><a href="{{ url_for('users.notifications') }}" class="white-text"><i class="fas fa-bell"></i> &nbsp; Notifications</a> 
+        {% if current_user.role == 'Admin' %}
+                {% if all_activities %}
+                        <span class="badge badge-pill badge-warning">{{ all_activities | length }}</span> 
+                {% endif %}
+        {% else %}
+                {% if user_activities %}
+                        <span class="badge badge-pill badge-warning">{{ user_activities | length }}</span> 
+                {% endif %}
+        {% endif %}
+</li>
+
+{% if current_user.role == 'Admin' %}
+<li><a href="{{ url_for('users.user') }}" class="white-text"><i class="fas fa-users"></i> &nbsp; Users mgt.</a>
+</li>
+{% endif %}
+
+<li style="position: absolute; top: 115%; border-width: 0px;"><a href="{{ url_for('users.portal') }}"
+        class="white-text"><i class="fas fa-arrow-left"></i>
+        &nbsp; Portal</a>
+</li>
+{% endmacro %}
+<!-- Eggtore Sidenav -->
+
+<!-- Profile SideNav -->
+{% macro profile() %}
+<li><a href="#" class="white-text"><i class="fas fa-users"></i> &nbsp; Human Resources</a>
+</li>
+<li><a href="{{ url_for('feedmill.feedoverview') }}" class="white-text"><i class="fas fa-tachometer-alt"></i> &nbsp;
+        Feed
+        Cost mgt.</a>
+</li>
+<li><a href="#" class="white-text"><i class="fas fa-industry"></i> &nbsp;
+        Procurement mgt.</a></li>
+<li><a href="#" class="white-text"><i class="fas fa-shopping-cart"></i> &nbsp;
+        Sales mgt.</a></li>
+<li><a href="{{ url_for('stores.store_portal') }}" class="white-text"><i class="fas fa-boxes"></i> &nbsp; Store mgt.</a>
+</li>
+{% if current_user.role == 'Admin' %}
+<li><a href="{{ url_for('users.user') }}" class="white-text"><i class="fas fa-users"></i> &nbsp; Users mgt.</a>
+</li>
+{% endif %}
+
+{% endmacro %}
+<!-- Profile SideNav -->

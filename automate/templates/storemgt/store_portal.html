@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename='wt-css/wt-main.css')}}">
+    <link rel="icon" href="{{url_for('static', filename='wt-design/favicon.png')}}">
+
+    {% if title %}
+    <title>{{ title }} - Management System</title>
+    {% else %}
+    <title>Management System</title>
+    {% endif %}
+
+</head>
+
+<body>
+
+    <!-- Main -->
+    <div class="portal pt-3 full-bg">
+
+        <!-- Header -->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-between">
+                    <div class="logo">
+                        <img src="{{url_for('static', filename='wt-design/favicon.png')}}" class="img" alt="logo">
+                    </div>
+                    <div class="profile d-flex align-items-center flex-row">
+                        <div class="profile-info mr-3 font-small">
+                            <span class="font-weight-bold">Hi, <a href="javascript: void(0)"
+                                    class="black-text font-weight-normal user-name">
+                                    {% if current_user.firstname and current_user.lastname %}
+                                    {{ current_user.firstname +" "+ current_user.lastname  }}
+                                    {% else %}
+                                    {{ current_user.username }}
+                                    {% endif %}
+                                </a>
+                            </span>
+                            <!-- Dropdown -->
+                            <ul class="list-unstyled p-2 more z-depth-1">
+                                <li class="font-small"> <a href="{{ url_for('users.profile') }}" class="text-dark"><i
+                                            class="fas fa-user teal-text"></i>
+                                        Profile</a> </li>
+                                <li class="font-small"><a href="{{ url_for('users.logout') }}" class="text-dark"><i
+                                            class="fas fa-power-off text-danger"></i>
+                                        LogOut</a> </li>
+                            </ul>
+                        </div>
+                        <div class="profile-img rounded-circle z-depth-1">
+                            <img src="{{ image_file }}" alt="{{ current_user.username }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Header -->
+
+        <!-- Welcome Alert -->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center font-weight-bold system-name mdb-color-text">
+                    County Choice Management System
+                </div>
+                <div class="col-md-12 mt-3 welcome-alert">
+                    <div class="alert alert-success">
+                        Welcome to County Choice Management System Portal
+                        <a href="javascript: void(0)" class='close font-small' data-dismiss="alert">&times;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Alert -->
+
+        <!-- Portals -->
+        <div class="container">
+            <div class="row py-5">
+                <div class="col-md-10 offset-md-1">
+                    <div class="portal-box d-flex justify-content-around align-items-center flex-wrap">
+
+                        <!-- First Box -->
+                        <div class="box-1 z-depth-1-half aqua-gradient d-flex flex-column align-items-center">
+                            <div class="box-img mt-3">
+                                <a href="#"><img src="{{ url_for('static', filename='wt-design/store.png') }}"
+                                        alt=""></a>
+                            </div>
+                            <div class="box-title w-75 text-center font-weight-bold">
+                                <a href="{{ url_for('stores.store_overview') }}" class="black-text">FARM STORE</a>
+                            </div>
+                        </div>
+                        <!-- First Box -->
+
+                        <!-- Second Box -->
+                        <div class="box-1 z-depth-1-half aqua-gradient d-flex flex-column align-items-center">
+                            <div class="box-img mt-3">
+                                <a href="{{ url_for('feedmill.feedoverview') }}"><img
+                                        src="{{ url_for('static', filename='wt-design/egg-store.png') }}" alt=""></a>
+                            </div>
+                            <div class="box-title w-75 text-center font-weight-bold">
+                                <a href="{{ url_for('stores.eggstore_overview') }}" class="black-text">EGG STORE</a>
+                            </div>
+                        </div>
+                        <!-- Second Box -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portals -->
+
+        <!-- Footer -->
+        <footer style="position: absolute; bottom: 0.625rem; width: 100%; text-align: center">
+            <div class="page-footer py-2">
+                <div class="footer-copyright text-center">
+                    <div class="footer-text white-text text-muted">@2019 All Rights Reserved | Developed by
+                        WebTekNg</div>
+                </div>
+            </div>
+        </footer>
+        <!-- Footer -->
+
+    </div>
+    <!-- Main -->
+
+
+    <!-- Scripts Goes Here -->
+    <script src="{{url_for('static', filename='wt-js/main-dist.js')}}"></script>
+    <script>
+        //Handle Form Resubmission
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+    <!-- Scripts Goes Here -->
+
+</body>
+
+</html>

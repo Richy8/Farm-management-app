@@ -1,0 +1,388 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/fields.html" import render_form %}
+{% from "macros/sidenav.html" import feedmill with context %}
+
+{% block sidenav %}
+{{ feedmill() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to FeedMill Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1rem">Feed Types..</h5>
+            </div>
+            <div class="newfeedtype">
+                <button class="btn btn-md teal white-ic" data-toggle="modal" data-target="#addFeed" id="newFeedButton"
+                    style="border-radius: 0.3125rem; font-size: 10px"><i class="fas fa-plus"></i>&nbsp; New Feed</button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 white mt-3 py-3 z-depth-1 alert" style="position:relative;">
+            <div class="info font-small blue-grey-text pb-2 w-75">Below are the currently produced Feed Types..
+            </div>
+            <a href="javascript: void(0)" class="close"
+                style="font-size:0.9375rem; position:absolute; top: 1.25rem; right: 1.25rem;"
+                data-dismiss="alert">&times;</a>
+            <div class="d-flex justify-content-around align-items-center flex-wrap">
+
+                {% if feedtypes %}
+                {% for feedtype in feedtypes %}
+                <div class="feeditems wow bounceIn">
+                    <button class="btn btn-md white-ic type-button {{ type_colors[feedtype.id] }}"
+                        id="{{ feedtype.id }}" data-toggle="modal" data-target="#openChart" style="font-size: 0.625rem">{{ feedtype.type }}</button>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="blue-grey-text font-small">No Feed type created yet!</div>
+                {% endif %}
+
+            </div>
+        </div>
+        <!-- Second Row -->
+
+        <!-- Third Box -->
+        <div class="col-md-12 white py-2 mt-2 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+
+                <div id="accordion">
+                    <div class="inner-row d-flex justify-content-between bg-success px-2 py-1">
+                        <div class="item-title d-flex align-items-center">
+                            <h6 class="white-text pt-2" style="font-size: 0.875rem">Feed Produced</h6>
+                        </div>
+                        <a href="#collapseTwo" class="white-text border rounded-circle" data-toggle="collapse"
+                            style="min-width: 30px; height: 30px; position: relative"><i class="fas fa-caret-down"
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                    </div>
+                    <!-- Inner Row 1 -->
+
+                    <!-- Table Row -->
+                    <div class="px-2 mt-3 collapse show" id="collapseTwo" data-parent="#accordion">
+                        <table
+                            class="table w-100 table-responsive table-hover table-responsive table-striped"
+                            id="table" style="overflow: auto;">
+                            <thead class="black-text grey lighten-1">
+                                <th class="font-weight-bold" width="120px" style="min-width:120px; font-size: 0.72rem">Feed Types</th>
+                                {% if feeditems %}
+                                {% for feed in feeditems %}
+                                <th class="font-weight-bold" width="70px" style="font-size: 0.72rem">{{ feed.item | wordTruncate }}</th>
+                                {% endfor %}
+                                {% endif %}
+                                <th class="font-weight-bold" width="50px" style="font-size: 0.72rem">Edit</th>
+                                <!-- <th class="font-weight-bold" width="50px" style="font-size: 0.72rem">Delete</th> -->
+                            </thead>
+                            <tbody>
+
+                                {% if feedtypes %}
+                                {% for f_type in feedtypes %}
+                                <tr>
+
+                                    <td style="font-size: 13px">{{ f_type.type }}</td>
+
+                                    {% for feed in feeditems %}
+                                    <td style="font-size: 13px">{{ feed.formulations[ f_type.id | numberDecreament ].formula }}</td>
+                                    {% endfor %}
+
+                                    <!-- EDIT -->
+                                    <td style="font-size: 13px"><input type="button" class="border-0 bg-success white-ic edit-formulation px-2"
+                                            style="cursor: pointer; border-radius:20px;" id="{{ f_type.id }}"
+                                            data-toggle="modal" data-target="#updateFeedType" value="Edit">
+                                    </td>
+                                    <!-- DELETE -->
+                                    <!-- <td style="font-size: 13px">
+                                        <button type="submit" class=" btn btn-sm rounded-pill py-1 px-2 bg-danger delete-button" style="margin-top:0rem; margin-bottom: 0rem;" data-toggle="modal" data-target="#deleteFeedType" id="{{ f_type.id }}" ><i class="fas fa-trash white-ic"></i></button>
+                                    </td> -->
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Table Row -->
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Third Box -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+
+{% block modal %}
+<!-- New Feed Type Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addFeed" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Add New Feed Type
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter details of
+                                feed type below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2" id="newFeedForm">
+                                {{ form.csrf_token }}
+
+                                <!-- Feed Type -->
+                                {{ render_form(form.feedtype, placeholder="Enter Feed Type...") }}
+
+                                <input type="hidden" name="check" value="check">
+
+                                <!-- Dynamic type_id selection -->
+                                {% if feedtypes %}
+                                <input type="hidden" id="typeId" value="{{  feedtypes | length }}">
+                                {% else %}
+                                <input type="hidden" id="typeId" value="1">
+                                {% endif %}
+
+                                <span class="font-small text-danger">Enter 0, if feed item was not used</span>
+
+                                <div class="my-2 font-small blue-text saharaSand-bg text-right border p-2 pr-3"><span
+                                        class="teal-text">Total:</span> <span id="totalFormula">0</span> </div>
+
+                                <!-- Quantity -->
+                                <div style="height: 18.75rem; overflow: scroll;">
+                                    {% if feeditems %}
+                                    {% for item in feeditems %}
+                                    <div class="d-flex justify-content-around align-items-center mb-2"
+                                        id="inputFormula">
+                                        <label for=""
+                                            class="font-small mt-1 blue-grey-text w-25" id="{{ item.id }}">{{ item.item }}:</label>
+                                        &nbsp;
+                                        <input type="number" min="0" step="0.01" required class="form-control w-75"
+                                            id="f-{{ item.item }}" name="{{ item.item }}" value="0">
+                                    </div>
+                                    {% endfor %}
+                                    {% else %}
+                                    <div class="w-100 blue-grey-text font-small text-center my-3">No Feeditem added yet!
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">ADD
+                                    FEED</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New Feed Type Modal -->
+
+<!-- Feed Chart Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="openChart" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Feed Formulation Chart
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Formulation details
+                            </span>
+                            <!-- Canvas Chart -->
+                            <div class="mt-2 py-3">
+                                <canvas id="myCanvas"></canvas>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Feed Chart Modal -->
+
+<!-- Update Feed Type Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="updateFeedType" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Update Feed Type
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Update details of
+                                feed type below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2" id="updateFeedForm">
+                                {{ form2.csrf_token }}
+
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="check2">
+
+                                <!-- Feed id -->
+                                <input type="hidden" name="feedid" id="feedId">
+
+                                <!-- Feed Type -->
+                                {{ render_form(form2.feedtype, id="feedType", placeholder="Enter Feed Type...") }}
+
+
+                                <span class="font-small text-danger d-block mb-3">Enter 0, if feed item was not
+                                    used</span>
+
+                                <div class="my-2 font-small blue-text saharaSand-bg text-right border p-2 pr-3"><span
+                                        class="teal-text">Total:</span> <span id="totalForm">0</span> </div>
+
+                                <!-- Quantity -->
+                                <div style="height: 18.75rem; overflow: scroll;">
+                                    {% if feeditems %}
+                                    {% for item in feeditems %}
+                                    <div class="d-flex justify-content-around align-items-center mb-2" id="allInputs">
+                                        <label for=""
+                                            class="font-small mt-1 blue-grey-text w-25">{{ item.item }}:</label>
+                                        &nbsp;
+                                        <input type="number" name="{{ item.item }}" step="0.01"
+                                            class="form-control w-75" id="{{ item.item }}"
+                                            placeholder="Enter {{ item.item }} formulation here..">
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">UPDATE
+                                    FEED</button>
+                                <!-- Submit -->
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Update Feed Type Modal -->
+
+<!-- Delete Feedtype button -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="deleteFeedType" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Are you sure you want to delete feedtype?
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="blue-grey-text font-small">On click of delete button, you need to wait for
+                                authorization before request will be made, thank you!</span>
+                            <div class="my-2 d-flex justify-content-around">
+                                
+                                <!-- Authorize Form -->
+                                <form action="" method="post">
+                                    {{ form.csrf_token }}
+
+                                    <input type="hidden" name="check" value="delete">
+                                    <input type="hidden" name="feedtype_id" id="feedtypeId" value="">
+
+                                    <button type="submit" class="btn btn-md bg-danger white-ic font-small delete-item"
+                                        style="border-radius: 1.25rem">Delete</button>
+                                </form>
+
+                                 <!-- Cancel Button -->
+                                 <button class="btn btn-md bg-warning white-ic font-small cancel-item"
+                                 style="border-radius: 1.25rem" data-dismiss="modal">Cancel</button>
+
+                            </div>
+                            <span class="red-text" style="font-size: 0.75rem">Note: Delete only when necessary!!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Feedtype button -->
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{url_for('static', filename='wt-js/feedformulation.js')}}"></script>
+{% endblock ajax %}

@@ -1,0 +1,291 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/fields.html" import render_form %}
+{% from "macros/sidenav.html" import profile with context %}
+
+{% block sidenav %}
+{{ profile() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Users Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 0.9375rem">Users Database..</h5>
+            </div>
+            <div class="newpurchase">
+                <button class="btn btn-md teal white-ic px-3 py-2 text-capitalize" data-toggle="modal" data-target="#editUser"
+                style="border-radius: 10px; font-size: 0.6875rem;"><i class="fas fa-plus"></i>&nbsp;New User</button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Box -->
+        <div class="col-md-12 white py-2 mt-2 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+
+                <div class="inner-row d-flex justify-content-between bg-success px-2 py-1">
+                    <div class="item-title d-flex align-items-center">
+                        <h6 class="white-text pt-2" style="font-size: 0.8125rem">All Users on the management system
+                            platform</h6>
+                    </div>
+
+                </div>
+                <!-- Inner Row 1 -->
+
+                <!-- Table Row -->
+                <div class="px-2 mt-3">
+                    <table
+                        class="table w-100 table-responsive table-hover table-responsive table-striped"
+                        id="table" style="overflow: auto;">
+                        <thead class="black-text grey lighten-1">
+                            <th class="font-weight-bold" width="220px" style="min-width:120px; font-size:0.7188rem;">Username</th>
+                            <th class="font-weight-bold" width="270px" style="min-width:200px; font-size:0.7188rem;">Fullname</th>
+                            <th class="font-weight-bold" width="290px" style="min-width:110px; font-size:0.7188rem;">Email</th>
+                            <th class="font-weight-bold" width="130px" style="min-width:80px;; font-size:0.7188rem">Role</th>
+                            <th class="font-weight-bold" width="50px" style="min-width:80px;; font-size:0.7188rem">Edit</th>
+                            <th class="font-weight-bold" width="50px" style="min-width:80px;; font-size:0.7188rem">Delete</th>
+                        </thead>
+                        <tbody>
+                            {% if users %}
+                            {% for user in users %}
+                            <tr>
+                                <td style="font-size: 0.8125rem">{{ user.username }}</td>
+                                <td style="font-size: 0.8125rem">{% if user.firstname and user.lastname %}
+                                    {{ user.firstname+' '+user.lastname }}
+                                    {% else %}
+                                    {{ 'Not Set' }}
+                                    {% endif %}
+                                </td>
+                                <td style="font-size: 0.8125rem">{{ user.email }}</td>
+                                <td class="text-danger" style="font-size: 0.8125rem">{{ user.role }}</td>
+                                <td style="font-size: 0.8125rem"><button class="btn btn-sm white-ic bg-success my-0 py-1 px-2 editButton" id="{{ user.id }}" data-toggle="modal"
+                                        data-target="#editUser" style="font-size: 0.6875rem"> <i class="fas fa-edit"></i> </button></td>
+                                <td style="font-size: 0.8125rem"><button class="btn btn-sm white-ic bg-danger my-0 py-1 px-2 deleteButton" id="{{ user.id }}" data-toggle="modal"
+                                         data-target="#deleteUser" style="font-size: 0.6875rem"> <i class="fas fa-trash"></i> </button></td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                No Users added yet!
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Table Row -->
+            </div>
+
+        </div>
+
+        <!-- Second Box -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+
+{% block modal %}
+<!-- New User Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addUsers" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Add New Users
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter email and user
+                                role of new user below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 addUsers">
+                                {{ form.csrf_token }}
+
+                                <!-- Email -->
+                                {{ render_form(form.email, placeholder="Enter User Email..") }}
+                                <!-- Email -->
+
+                                <!-- User Role -->
+                                {{ render_form(form.role, placeholder="Enter User Role..") }}
+                                <!-- User Role -->
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">ADD USER</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New User Modal -->
+
+<!-- Edit User Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="editUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Edit User Role
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter new user role
+                                below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 updateUsers">
+                                {{ form.csrf_token }}
+
+                                <input type="hidden" name="check" value="edit_user">
+                                <input type="hidden" name="userId" id="userId">
+
+                                <!-- Email -->
+                                <div class="form-group">
+                                    <div class="help-block font-small blue-grey-text mb-1">Email</div>
+
+                                    <input type="email" name="userEmail" required class="form-control" id="userEmail" placeholder="Enter User Email">
+                                </div>
+                                
+                                <!-- Email -->
+
+                                <!-- User Role -->
+                                {{ render_form(form.role, placeholder="Enter User Role..") }}
+                                <!-- User Role -->
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">UPDATE
+                                        ROLE</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit User Modal -->
+
+<!-- Delete User -->
+<div class="container">
+        <div class="row">
+            <div class="col-md-10 offset-md-2">
+                <div class="modal fade top" id="deleteUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                    aria-hidden="true" data-backdrop="true">
+                    <div class="modal-dialog modal-top modal-notify" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header teal">
+                                <div class="modal-title springWood h5-responsive"
+                                    style="font-size: 0.875rem">Delete User
+                                </div>
+                                <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                            </div>
+                            <div class="modal-body">
+                                <span class="help-block font-small teal-text">Are you sure you want to delete <span id="username"></span>?
+                                </span>
+    
+                                <form action="" method="POST" class="mt-2 deleteUsers">
+                                    {{ form.csrf_token }}
+    
+                                    <input type="hidden" name="check" value="delete_user">
+                                    <input type="hidden" name="delete_user_id" id="deleteUserId">
+    
+                                    <!-- Password -->
+                                    <div class="form-group">
+                                        <div class="help-block font-small blue-grey-text mb-1">Enter your password to confirm delete:</div>
+    
+                                        <input type="password" name="password" required class="form-control" placeholder="Enter Password">
+                                    </div>
+                                    
+                                    <!-- Password -->
+    
+    
+                                    <!-- Submit -->
+                                    <div class="form-group">
+                                        <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                            id="submitButton">DELETE USER</button>
+                                    </div>
+                                </form>
+    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Delete User -->
+
+
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/users.js') }}"></script>
+{% endblock ajax %}

@@ -1,0 +1,311 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/fields.html" import render_form %}
+{% from "macros/sidenav.html" import feedmill with context %}
+
+{% block sidenav %}
+{{ feedmill() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to FeedMill Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1.0938rem">Feed Purchases..</h5>
+            </div>
+            <div class="newpurchase">
+                <button class="btn btn-md teal white-ic" data-toggle="modal" data-target="#addPurchases"
+                    style="border-radius: 0.3125rem;"><i class="fas fa-plus"></i>&nbsp; New Purchase</button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Box -->
+        <div class="col-md-12 white py-2 mt-2 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+
+                <div class="inner-row d-flex justify-content-between bg-success px-2 py-1">
+                    <div class="item-title d-flex align-items-center">
+                        <h6 class="white-text pt-2" style="font-size: 0.925rem">Vendor Purchases
+                            ({{ date.strftime("%b-%d") }})</h6>
+                    </div>
+                </div>
+                <!-- Inner Row 1 -->
+
+                <!-- Inner Row 2 -->
+                <div class="filter mt-2 px-2">
+                    <form action="" method='POST' class="form-inline">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <label for="" class="blue-grey-text" style="font-size:0.875rem;">Filter By:</label>
+                            &nbsp;
+                            <input type="hidden" name="check" value="gobutton">
+                            <!-- Month -->
+                            <select name="month" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled>Month</option>
+                                {% if month %}
+                                {% for m in month %}
+                                <option value="{{ m }}">{{ m | numberMonth }}</option>
+                                {% endfor %}
+                                {% else %}
+                                <option value="" disabled>No Month</option>
+                                {% endif %}
+
+                            </select>
+                            <!-- Month -->
+                            &nbsp;
+                            <!-- Year -->
+                            <select name="year" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled>Year</option>
+                                {% if year %}
+                                {% for y in year %}
+                                <option value="{{ y }}">{{ y }}</option>
+                                {% endfor %}
+                                {% else %}
+                                <option value="" disabled>No Year</option>
+                                {% endif %}
+                            </select>
+                            <!-- Year -->
+                            &nbsp;
+                            <!-- Go -->
+                            <input type="submit" class="form-control bg-info white-ic w-auto"
+                                style="font-size:0.7813rem;" value="GO">
+                        </div>
+                    </form>
+                </div>
+                <!-- Inner Row 2 -->
+
+                <!-- Table Row -->
+                <div class="px-2 mt-3">
+                    <table
+                        class="table w-100 table-responsive table-bordered table-hover table-responsive table-striped"
+                        id="table" style="overflow: auto;">
+                        <thead class="font-weight-bold black-text grey">
+                            <th width="240px" style="min-width:120px;">Date</th>
+                            <th width="300px" style="min-width:200px;">Vendor</th>
+                            <th width="230px" style="min-width:110px;">FeedItem</th>
+                            <th width="180px" style="min-width:80px;">Qty (Kg)</th>
+                            <th width="120px" style="min-width:80px;">Price (&#8358;)</th>
+                            <th width="80px" style="min-width:80px;">Edit</th>
+                        </thead>
+                        <tbody>
+
+                            <!-- Load Venddor Details -->
+                            {% if vendors %}
+                            {% for vendor in vendors %}
+                            <tr>
+                                <td>{{ vendor.date }}</td>
+                                <td>{{ vendor.vendor }}</td>
+                                <td>{{ vendor.feeditem.item }}</td>
+                                <td>{{ vendor.v_qty | numberFormat }}</td>
+                                <td>{{ vendor.v_price }}</td>
+                                <td>
+                                    <a href="javascript: void(0)" class="bg-success white-text px-2 py-1 edit"
+                                        id="{{vendor.id}}"
+                                        style="font-size: 0.8125rem; border-radius: 0.3125rem; cursor: pointer"
+                                        data-toggle="modal" data-target="#updatePurchases">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center teal-text">No data</td>
+                            </tr>
+                            {% endif %}
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Table Row -->
+            </div>
+
+        </div>
+
+        <!-- Second Box -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+
+{% block modal %}
+<!-- New Purchases Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addPurchases" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Feed Item Purchase Form
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter details of
+                                purchased
+                                item below!
+                            </span>
+
+                            <form action="{{ url_for('feedmill.processpurchases') }}" method="POST" class="mt-2">
+                                {{ form.csrf_token }}
+
+                                <!-- Venddor -->
+                                {{ render_form(form.vendor, placeholder="Enter Vendor Name...") }}
+
+                                <!-- Feed Item -->
+                                <div class="mb-3">
+                                    <label for=""
+                                        class="font-small mt-1 blue-grey-text">{{ form.item.label.text }}:</label>
+                                    &nbsp;
+                                    <select name="item" class="form-control" required>
+                                        <option value="" selected disabled class="font-small">Select Feed item</option>
+                                        {% if feeditems %}
+                                        {% for item in feeditems %}
+                                        <option value="{{ item.id }}">{{ item.item }}</option>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+
+                                <!-- Quantity -->
+                                {{ render_form(form.quantity, min='0', step='0.01', placeholder='Enter Item Quantity (Kg)') }}
+
+                                <!-- Price -->
+                                {{ render_form(form.price, placeholder='Enter Item Price') }}
+
+                                <!-- Submit -->
+                                {{ form.submit(class='form-control teal white-ic font-small mt-2') }}
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New Purchases Modal -->
+
+<!-- Update Purchases -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="updatePurchases" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Update Purchased Feed Item
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter updated details of
+                                purchased
+                                item below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2">
+                                {{ form2.csrf_token }}
+
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="check2">
+                                <input type="hidden" name="id" id="vendorId">
+
+                                <!-- Date -->
+                                <div class="d-flex justify-content-around align-items-center mb-2">
+                                    <label for="" class="font-small mt-1">{{ form2.date.label.text }}:</label>
+                                    &nbsp;
+                                    {{ form2.date(class="form-control", id="vendorDate", disabled=disabled, placeholder="Enter Date (e.g 2019-04-08)") }}
+                                </div>
+
+                                <!-- Venddor -->
+                                <div class="mb-3">
+                                    <label for="" class="font-small mt-1 blue-grey-text">Vendor:</label>
+                                    &nbsp;
+                                    <input type="text" name="vendor" class="form-control" id="vendorName"
+                                        placeholder="Enter Vendor Name..">
+                                </div>
+
+                                <!-- Feed Item -->
+                                <div class="mb-3">
+                                    <label for=""
+                                        class="font-small mt-1 blue-grey-text">{{ form2.item.label.text }}:</label>
+                                    &nbsp;
+                                    <select name="item" id="vendorItem" class="form-control">
+
+                                    </select>
+                                </div>
+
+                                <!-- Quantity -->
+                                {{ render_form(form2.quantity, step="0.01", id="vendorQty", placeholder='Enter Item Quantity (Kg)') }}
+
+                                <!-- Price -->
+                                {{ render_form(form2.price, step="0.01", id="vendorPrice", placeholder='Enter Item Price') }}
+
+                                <!-- Submit -->
+                                {{ form.submit(class='form-control teal white-ic font-small mt-2') }}
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Update Purchases -->
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{url_for('static', filename='wt-js/feedpurchase.js')}}"></script>
+{% endblock ajax %}

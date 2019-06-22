@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Themify Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.min.css">
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="{{url_for('static', filename='wt-css/wt-main.css')}}">
+    <link rel="icon" href="{{url_for('static', filename='wt-design/favicon.png')}}">
+
+    {% if title %}
+    <title>{{ title }} - Management System</title>
+    {% else %}
+    <title>Management System</title>
+    {% endif %}
+
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header-div fixed-top scrolling-navbar">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Header 1 (LEFT) -->
+                <div class="col-md-2 spectra-bg z-depth-1 header-1">
+                    <div class="row px-3 d-flex justify-content-between align-items-center py-2">
+                        <!-- Menu Bar -->
+                        <div class="springWood d-md-none" id="bars"><i class="fas fa-bars" style="cursor:pointer"></i>
+                        </div>
+                        <!-- Dashboard -->
+                        <div class="springWood navbar-brand" style="font-size: 0.8125rem"><i class="fas fa-{{ ficon }}"></i>&nbsp;
+                            {{ title }}</div>
+                        <!-- Ellipsis -->
+                        <div class="springWood d-md-none" id="ellipsis" style="cursor:pointer"><i
+                                class="fas fa-ellipsis-v"></i></div>
+                    </div>
+
+                </div>
+
+                <!-- Header 2 (RIGHT) -->
+                <div class="col-md-10 teal d-none d-md-block z-depth-1 py-sm-2 py-md-2" style="z-index: 999">
+                    <div class="d-flex justify-content-between align-items-center w-100 h-100">
+                        <!-- header 2 left nav -->
+                        <div class="left-head">
+                            <strong class="white-text"><i class="fas fa-tachometer-alt"></i> &nbsp; Dashboard</strong>
+                        </div>
+                        <!-- header 2 right nav -->
+                        <div class="right-head d-flex justify-content-around align-items-center float-right">
+                            <div class="notification position-relative">
+                                <div class="dropdown">
+                                    <i class="fas fa-bell white-text"></i>
+
+                                    {% if current_user.role == 'Admin' %}
+                                        {% if all_activities %}
+                                            <span class="badge badge-pill badge-warning" style="font-size: 0.625rem; position:relative; left: -0.5625rem; z-index:99; cursor: pointer;" id="dropDown">{{ all_activities | length }}</span>
+                                        {% else %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% if user_activities %}
+                                            <span class="badge badge-pill badge-warning" style="font-size: 0.625rem; position:relative; left: -0.5625rem; z-index:99; cursor: pointer;" id="dropDown">{{ user_activities | length }}</span>
+                                        {% else %}
+                                        {% endif %}
+                                    {% endif %}
+
+                                </div>
+                                <div style="font-size: 11.5px" id="dropMenu" class="d-none">
+                                    <div class="mt-2 white px-1 rounded z-depth-1" style="width: 13rem; position: absolute; left:-140px;">
+                                        <ul class="list-unstyled pt-2 px-1">
+                                            <li class="font-weight-bold mb-2 teal-text border-bottom pb-1" style="font-size: 11.5px">Pending Notifications</li>
+
+                                            {% if current_user.role == 'Admin' %}
+                                                {% if all_activities %}
+                                                    {% for activity in all_activities %}
+                                                    <li class="mb-2 z-depth-1 p-1 d-flex justify-content-between align-items-center"> 
+                                                        <i class="fas fa-bell text-danger font-small"></i> 
+                                                        &nbsp; &nbsp;
+                                                        <a href="{{ url_for('users.notifications') }}" class="d-block text-wrap">
+                                                            {{ activity.activity | extractTwoWords   }} from {{ activity.user.username }} - <span class="green-text darken-1" style="font-size: 10px;">{{ activity.date.strftime("%d-%m-%Y") }}</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% else %}
+                                                {% if user_activities %}
+                                                    {% for activity in user_activities %}
+                                                    <li class="mb-2 z-depth-1 p-1 d-flex justify-content-between align-items-center"> 
+                                                        <i class="fas fa-bell text-danger font-small"></i> 
+                                                        &nbsp; &nbsp;
+                                                        <a href="{{ url_for('users.notifications') }}" class="d-block text-wrap">
+                                                            {{ activity.activity | extractTwoWords   }} from {{ activity.user.username }} - <span class="green-text darken-1" style="font-size: 11px; font-weight: 600">{{ activity.date.strftime("%d-%m-%Y") }}</span>
+                                                        </a>
+                                                    </li>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endif %}
+
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            </div>
+                            &nbsp;&nbsp;
+                            <div class="profile d-flex justify-content-center align-items-center">
+                                <div class="rounded-circle white profile-pic">
+                                    <img src="{{ image_file }}" alt="{{ current_user.username }}">
+                                </div>
+                                &nbsp;&nbsp;
+
+                                <div class="profile-name white-text">
+                                    {% if current_user.firstname and current_user.lastname %}
+                                    {{ current_user.firstname +" "+ current_user.lastname }}
+                                    {% else %}
+                                    {{ current_user.username }}
+                                    {% endif %}
+                                    <i class="fas fa-caret-down" style="cursor: pointer"></i>
+                                    <div class="dropdownMenu">
+                                        <ul class="list-unstyled z-depth-1 teal lighten-1 white-text py-2" style="width: 80px;">
+                                            <li class="px-2 mb-2">
+                                                <a href="{{ url_for('users.profile') }}" class="white-text"><i
+                                                        class="fas fa-user"></i>&nbsp;
+                                                    Profile</a>
+                                            </li>
+                                            <li class="px-2">
+                                                <a href="{{ url_for('users.logout') }}" class="white-text"><i
+                                                        class="fas fa-power-off"></i>&nbsp;
+                                                    LogOut</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header -->
+
+    <!-- Sidebar -->
+    <div class="sidebar-div">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-2 spectra-bg white-text d-none d-md-block z-depth-1">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="profile-pic white rounded-circle">
+                            <img src="{{ image_file }}" alt="{{ current_user.username }}">
+                        </div>
+                    </div>
+
+                    <!-- Profile Name -->
+                    <div class="profile-meta white-text mt-1 w-100 text-center">
+                        {% if current_user.firstname and current_user.lastname %}
+                        {{ current_user.firstname +" "+ current_user.lastname }}
+                        {% else %}
+                        {{ current_user.username }}
+                        {% endif %}
+                    </div>
+                    <!-- Position -->
+                    <div class="profile-meta white-text mt-1 w-100 text-center">Manager, {{ current_user.role }}</div>
+
+                    <ul class="list-unstyled mt-3" style="position: relative">
+                        {% block sidenav %}
+
+                        {% endblock sidenav %}
+                    </ul>
+
+                    <div class="side-footer white-text w-100 text-center py-2">
+                        Developed by WebTekNg@2019
+                    </div>
+                </div>
+                <!-- Sidebar -->
+
+                <!-- Content -->
+                {% block content %}
+
+                {% endblock content %}
+                <!-- Content -->
+
+                <!-- Modal -->
+                {% block modal %}
+
+                {% endblock modal %}
+                <!-- Modal -->
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="col-md-10 offset-md-2 footer-div text-center py-1 grey lighten-3">
+        County Choice Farms&copy;2019 &nbsp;| All Rights Reserved
+    </div>
+    <!-- Footer -->
+
+    <!-- Scripts Goes Here -->
+    <script src="{{url_for('static', filename='wt-js/main-dist.js')}}"></script>
+    <script>
+        //Handle Form Resubmission
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+    <!-- Scripts Goes Here -->
+
+    <!-- Ajax Script -->
+    {% block ajax %}
+
+    {% endblock ajax %}
+    <!-- Ajax Script -->
+
+</body>
+
+</html>

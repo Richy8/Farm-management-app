@@ -1,0 +1,418 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import store with context %}
+
+{% block sidenav %}
+{{ store() }}
+{% endblock sidenav %}
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title mt-2">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Store Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-2 z-depth-1">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="title mt-2">
+                    <h5 class="elegant-ic" style="font-size: 1rem">Farm Vendors..</h5>
+                </div>
+                <div class="newpurchase">
+                    <button class="btn btn-sm teal white-ic" data-toggle="modal" data-target="#addVendor"
+                        style="border-radius: 10px;"><i class="fas fa-plus"></i>&nbsp;Vendor</button>
+                </div>
+            </div>
+            <div class="mt-1 pt-2 border-top">
+                <div class="info blue-grey-text pb-2 w-75" style="font-size:13px;">Below are the vendors in database..
+                </div>
+                <div class="d-flex justify-content-around align-items-center flex-wrap py-2">
+
+                    {% if vendor_list %}
+                    {% for vendor in vendor_list %}
+                        <div class="vendors">
+                            <button class="btn btn-sm white-ic hiddenIcons {{ vendor_color[vendor.id] }}">
+                                <i class="fas fa-edit renameVendor" id="{{ vendor.id }}" aria-label="Rename" data-toggle="modal" data-target="#renameVendor"></i> 
+                                    &nbsp; {{ vendor.vendor }} &nbsp;
+                                <i class="fas fa-trash deleteVendor" id="{{ vendor.id }}" aria-label="Delete" data-toggle="modal" data-target="#deleteVendor"></i>
+                            </button>
+                        </div>  
+                    {% endfor %}
+                    {% else %}
+                        <div class="vendors blue-grey-text mt-3 mb-4" style="font-size: 0.75rem">
+                            No vendor added yet!
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 white mt-3 py-2 z-depth-1">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="title mt-2">
+                    <h5 class="elegant-ic" style="font-size: 1rem">Farm Items..
+                    </h5>
+                </div>
+                <div class="newpurchase">
+                    <button class="btn btn-sm teal white-ic" data-toggle="modal" data-target="#addItem"
+                        style="border-radius: 0.625rem;"><i class="fas fa-plus"></i>&nbsp;Item</button>
+                </div>
+            </div>
+            <div class="mt-1 pt-2 border-top">
+                <div class="info blue-grey-text pb-2 w-75" style="font-size: 0.8125rem">Below are the purchased items in database..
+                </div>
+                <div class="d-flex justify-content-around align-items-center flex-wrap py-2">
+
+                    {% if farmitem_list %}
+                    {% for item in farmitem_list %}
+                        <div class="farmitems">
+                            <button class="btn btn-sm white-ic hiddenIcons {{ farmitem_color[item.id] }}">
+                                <i class="fas fa-edit renameFarmItem" id="{{ item.id }}" aria-label="Rename"
+                                    data-toggle="modal" data-target="#renameFarmItem"></i> 
+                                    &nbsp; {{ item.item }} &nbsp; 
+                                <i class="fas fa-trash deleteFarmItem" id="{{ item.id }}" aria-label="Delete" data-toggle="modal"
+                                    data-target="#deleteFarmItem"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                    {% else %}
+                        <div class="farmitems blue-grey-text mt-3 mb-4" style="font-size: 0.75rem">
+                            No Feed item added yet!
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        <!-- Second Row -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+
+{% block modal %}
+<!-- ADD VENDORS -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addVendor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">New Vendor
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter details of
+                                vendor below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 newVendor" id="newVendorForm">
+                                {{ form.csrf_token }}
+
+                                <input type="hidden" name="check" value="add_vendor">
+
+                                <!-- Venddor -->
+                                <span class="blue-grey-text font-small">Vendor Name</span>
+                                <input type="text" class="form-control mb-2" name="vendor" required placeholder="Enter Vendor Name">
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">ADD
+                                    VENDOR</button>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ADD VENDORS -->
+
+<!-- ADD ITEMS -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">New Farm Item
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter details of
+                                farm item below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 newItemForm">
+                                {{ form.csrf_token }}
+
+                                <input type="hidden" name="check" value="add_farmitem">
+
+                                <!-- Farm Item -->
+                                <span class="blue-grey-text font-small">Farm Item</span>
+                                <input type="text" class="form-control mb-2" name="farmitem" required placeholder="Enter Farm Item">
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">ADD
+                                    ITEM</button>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ADD ITEMS -->
+
+<!-- Delete Vendor Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="deleteVendor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Are you sure you want to delete vendor?
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="blue-grey-text font-small">On click of delete button, you need to wait for
+                                authorization before request will be made, thank you!</span>
+                            <div class="my-2 d-flex justify-content-around">
+
+                                <form action="" method="post">
+                                    {{ form.csrf_token }}
+
+                                    <input type="hidden" name="check" value="delete_vendor">
+                                    <input type="hidden" name="vendor_delete_id" id="vendorDeleteId">
+
+                                    <button type="submit" class="btn btn-md bg-danger white-ic font-small"
+                                    style="border-radius: 1.25rem">Delete</button>
+
+                                </form>
+
+
+                                <button class="btn btn-md bg-warning white-ic font-small"
+                                    style="border-radius: 1.25rem" data-dismiss="modal">Cancel</button>
+                            </div>
+                            <span class="red-text" style="font-size: 0.75rem">Note: Delete only when necessary!!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Vendor Modal -->
+
+<!-- Delete Farm Item Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="deleteFarmItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Are you sure you want to delete farm item?
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="blue-grey-text font-small">On click of delete button, you need to wait for
+                                authorization before request will be made, thank you!</span>
+                            <div class="my-2 d-flex justify-content-around">
+
+                                <form action="" method="post">
+                                    {{ form.csrf_token }}
+
+                                    <input type="hidden" name="check" value="delete_farmitem">
+                                    <input type="hidden" name="farmitem_delete_id" id="farmitemDeleteId">
+                                    
+                                    <button class="btn btn-md bg-danger white-ic font-small"
+                                    style="border-radius: 1.25rem">Delete</button>
+
+                                </form>
+
+
+                                <button class="btn btn-md bg-warning white-ic font-small"
+                                    style="border-radius: 1.25rem" data-dismiss="modal">Cancel</button>
+                            </div>
+                            <span class="red-text" style="font-size: 0.75rem">Note: Delete only when necessary!!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Farm Item Modal -->
+
+<!-- Rename Vendor Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="renameVendor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Rename Vendor
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter new vendor below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 renameVendorForm">
+                                {{ form.csrf_token }}
+
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="rename_vendor">
+
+                                <input type="hidden" name="vendorId" id=vendorId>
+                                
+                                <!-- Old Name -->
+                                <div class="blue-grey-text font-small" style="font-size: 14px">Old Vendor Name</div>
+                                <input type="text" class="form-control mb-2" name="old_vendor_name" id="vendorInput" placeholder="oldname">
+
+                                <span class="font-small text-danger mb-2" style="position: relative; top: -10px;">Do not
+                                    edit the old name**</span>
+
+                                <!-- New Name -->
+                                <div class="blue-grey-text font-small" style="font-size: 14px">New Vendor Name</div>
+                                <input type="text" class="form-control" name="new_vendor_name" required placeholder="Enter new vendor name">
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">RENAME</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Rename Vendor Modal -->
+
+<!-- Rename Farm Item Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="renameFarmItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Rename Farm Item
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter new farm item name
+                                below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 renameFarmItemForm" id="">
+                                {{ form.csrf_token }}
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="rename_farmitem">
+
+                                <input type="hidden" name="farmitemId" id=farmitemId>
+
+                                <!-- Old Name -->
+                                <div class="blue-grey-text font-small" style="font-size: 14px">Old Farmitem Name</div>
+                                <input type="text" neme="old_farmitem_name" class="form-control mb-2" id="farmitemInput" placeholder="oldname">
+
+                                <span class="font-small text-danger mb-2" style="position: relative; top: -10px;">Do not
+                                    edit the old name**</span>
+
+                                <!-- New Name -->
+                                <div class="blue-grey-text font-small" style="font-size: 14px">New Farmitem Name</div>
+                                <input type="text" name="new_farmitem_name" class="form-control" required placeholder="Enter new name">
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">RENAME</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Rename Farm Item Modal -->
+
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/storevendors.js') }}"></script>
+{% endblock ajax %}

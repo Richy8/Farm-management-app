@@ -1,0 +1,865 @@
+body {
+    font-family: tahoma;
+    background: rgb(240, 240, 240);
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #9ddab7c5 !important;
+}
+
+.full-bg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.brand {
+    .img {
+        min-width: 2.1875rem;
+        min-height: 2.1875rem;
+        width: 3.3125rem;
+        height: 2.8125rem;
+    }
+
+    .text {
+        font-size: 1.7rem;
+    }
+
+    .tag {
+        position: absolute;
+        top: 2.2875rem;
+        right: 0;
+        font-size: 0.875rem
+    }
+}
+
+.form-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    .form-box {
+        border-radius: 5px;
+        background: rgba(0, 128, 128, 0.4);
+
+        .login-text {
+            font-size: 1.1rem
+        }
+
+        #loginForm {
+            .form-control {
+                &:focus {
+                    border-color: #008080;
+                    box-shadow: 0 0 0 0.2rem rgba(0, 128, 128, 0.25);
+                }
+            }
+        }
+    }
+}
+
+#loginFooter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    .page-footer {
+        .footer-copyright {
+            color: #fff !important;
+        }
+    }
+}
+
+/*==========================
+ Media Query for Login Form 
+ ==========================*/
+@media (max-width:480px) {
+    .brand {
+        .img {
+            min-width: 1.875rem;
+            min-height: 1.875rem;
+            width: 1.875rem;
+            height: 1.875rem;
+        }
+
+        .text {
+            font-size: 1.2rem;
+        }
+
+        .tag {
+            font-size: 0.7125rem;
+            right: 0.4125rem;
+            top: 2.5875rem;
+        }
+    }
+
+    .form-container {
+        .alert {
+            font-size: 0.85rem;
+        }
+
+        .form-box {
+            .login-text {
+                font-size: 0.95rem;
+            }
+
+            #loginForm {
+                .form-control {
+                    font-size: 0.9rem;
+                    padding: 0.3125rem auto
+                }
+            }
+        }
+    }
+
+    #loginFooter {
+        bottom: 0.625rem;
+
+        .page-footer {
+            .footer-copyright {
+                span {
+                    font-size: 0.8rem;
+                }
+            }
+        }
+    }
+}
+
+@media (min-width:481px) and (max-width: 990px) {
+    .brand {
+        .img {
+            min-width: 1.875rem;
+            min-height: 1.875rem;
+            width: 1.975rem;
+            height: 1.975rem;
+        }
+
+        .text {
+            font-size: 1.3rem;
+        }
+
+        .tag {
+            font-size: 0.8125rem;
+            right: 0.4125rem;
+            top: 2.5875rem;
+        }
+    }
+
+    .form-container {
+        .alert {
+            font-size: 0.87rem;
+        }
+
+        .form-box {
+            .login-text {
+                font-size: 1.2rem;
+            }
+
+            #loginForm {
+                .form-control {
+                    font-size: 1rem;
+                    padding: 0.32rem auto
+                }
+            }
+        }
+    }
+
+    #loginFooter {
+        bottom: 0.625rem;
+
+        .page-footer {
+            .footer-copyright {
+                span {
+                    font-size: 0.87rem;
+                }
+            }
+        }
+    }
+}
+
+.header-div {
+
+    .header-1 {
+        z-index: 999;
+
+        .navbar-brand {
+            font-size: 0.9375rem;
+        }
+    }
+
+
+    .left-head {
+        strong {
+            font: {
+                size: 0.9375rem;
+                family: tahoma;
+            }
+        }
+    }
+
+    .right-head {
+        .profile {
+            .profile-pic {
+                min-width: 30px;
+                min-height: 30px;
+                width: 30px;
+                height: 30px;
+                overflow: hidden;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            .profile-name {
+                position: relative;
+
+                font: {
+                    size: 0.8rem;
+                    family: tahoma;
+                }
+
+                &:after {
+                    position: absolute;
+                    top: 185%;
+                    left: 70%;
+                    content: "";
+                    display: block;
+                    border-right: 12px solid transparent;
+                    border-left: 12px solid transparent;
+                    border-bottom: 12px solid #009688;
+                    z-index: -9;
+                    display: none;
+
+                }
+
+                .dropdownMenu {
+                    position: absolute;
+                    top: 43px;
+                    right: 0;
+                    z-index: 99;
+                    display: none;
+                    font-size: 0.72rem;
+
+                    ul {
+                        border-radius: 0.3125rem;
+
+                        i {
+                            font-size: 0.7rem;
+                        }
+                    }
+                }
+
+                .show {
+                    display: block;
+                }
+            }
+
+        }
+    }
+}
+
+.show {
+    display: block !important;
+}
+
+.sidebar-div {
+    z-index: -99;
+
+    .col-md-2 {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        z-index: 9;
+        width: 15rem;
+        height: 100vh;
+        padding-top: 4.375rem;
+
+        .profile-pic {
+            position: relative;
+            min-width: 5rem;
+            min-height: 5rem;
+            width: 5rem;
+            height: 5rem;
+            overflow: hidden;
+            border: 0.125rem solid turquoise;
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+
+        }
+
+        .profile-meta {
+            font-size: 0.8rem;
+        }
+
+        ul {
+            li {
+                border: 1px solid #8a888860;
+                margin-bottom: 10px;
+
+                font: {
+                    size: 0.8125rem;
+                    family: 'tahoma';
+                }
+
+                padding: 5px;
+            }
+        }
+
+        .side-footer {
+            position: absolute;
+            bottom: 0;
+            font-size: 0.8125rem;
+            display: none;
+        }
+    }
+
+}
+
+.footer-div {
+    position: fixed;
+    bottom: 0;
+    font-size: 0.77rem;
+}
+
+@media(max-width: 380px) {
+    .header-div {
+
+        .col-md-10 {
+            padding-top: 0.375rem;
+            padding-bottom: 0.375rem;
+
+            .left-head {
+                strong {
+                    font-size: 0.87rem;
+                }
+            }
+
+            .right-head {
+                .profile {
+
+                    .profile-name {
+                        font-size: 0.75rem;
+
+                        .dropdownMenu {
+                            top: 40px;
+                        }
+                    }
+
+                }
+            }
+        }
+
+    }
+
+    .footer-div {
+        font-size: 0.7rem;
+    }
+}
+
+@media(max-width: 520px) {
+    .sidebar-div {
+        .col-md-2 {
+            width: 100%;
+
+            .side-footer {
+                display: block;
+            }
+        }
+    }
+}
+
+@media(min-width: 768px) and (max-width: 920px) {
+    .header-div {
+        .header-1 {
+            .navbar-brand {
+                font-size: 0.8125rem;
+                word-break: break-word;
+            }
+        }
+    }
+
+    .sidebar-div {
+        .col-md-2 {
+            ul li {
+                font-size: 0.8125rem;
+            }
+        }
+    }
+}
+
+@media(max-width: 577px) {
+    .header-div {
+        .col-md-10 {
+            padding-top: 0.375rem;
+            padding-bottom: 0.375rem;
+        }
+    }
+}
+
+.portal {
+    background: linear-gradient(#e1e78c, #4ac29e);
+
+    .logo {
+        img {
+            width: 4.6875rem;
+            height: 4.375rem
+        }
+    }
+
+    .profile {
+        .profile-info {
+            position: relative;
+
+            .more {
+                position: absolute;
+                right: 0;
+                z-index: 999;
+                background: rgb(164, 205, 140);
+                display: none;
+
+                li {
+                    i {
+                        font-size: 0.75rem;
+                    }
+                }
+            }
+
+            .show {
+                display: block;
+            }
+        }
+
+        .profile-img {
+            position: relative;
+            min-width: 60px;
+            min-height: 60px;
+            width: 60px;
+            height: 60px;
+            background: #8eec83;
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+
+        }
+    }
+
+    .system-name {
+        font: {
+            size: 1.4375rem;
+            family: tahoma;
+        }
+    }
+
+    .welcome-alert {
+        .alert {
+            font-weight: 600;
+        }
+    }
+
+    .portal-box {
+        .box-1 {
+            width: 240px;
+            height: 210px;
+            background: cyan;
+            border-radius: 5px;
+            margin-bottom: 20px;
+
+            .box-img {
+                width: 54.17%;
+                height: 57.14%;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            .box-title a {
+                &:hover {
+                    color: #5b6986 !important;
+                }
+
+            }
+        }
+    }
+
+    .page-footer {
+        .footer-text {
+            font-size: 0.8rem;
+        }
+
+    }
+}
+
+/*edia  Query
+=============*/
+@media(max-width: 380px) {
+    .portal {
+
+        .logo {
+            img {
+                width: 55px;
+                height: 50px
+            }
+        }
+
+        .profile {
+            .profile-info {
+                font-size: 0.75rem;
+
+                .more {
+
+                    li {
+                        font-size: 0.75rem;
+
+                        i {
+                            font-size: 0.75rem;
+                        }
+                    }
+                }
+
+            }
+
+            .profile-img {
+                min-width: 2.9rem;
+                min-height: 2.9rem;
+                width: 2.9rem;
+                height: 2.9rem;
+
+            }
+        }
+
+        .system-name {
+            margin-top: 20px;
+
+            font: {
+                size: 1.125rem;
+            }
+        }
+
+        .welcome-alert {
+            .alert {
+                font-size: 0.8rem;
+                font-weight: 400;
+            }
+        }
+
+        .portal-box {
+            .box-1 {
+                width: 150px;
+                height: 140px;
+
+                .box-img {
+                    width: 53%;
+                    height: 52.5%;
+                }
+
+                .box-title {
+                    font-size: 0.75rem;
+                    width: 100%;
+                }
+            }
+        }
+
+        .page-footer {
+            .footer-text {
+                font-size: 0.7rem;
+            }
+
+        }
+    }
+}
+
+@media (min-width: 381px) and (max-width: 480px) {
+    .portal {
+
+        .logo {
+            img {
+                width: 58px;
+                height: 53px
+            }
+        }
+
+        .profile {
+            .profile-info {
+                font-size: 0.8rem;
+
+                .more {
+
+                    li {
+                        font-size: 0.8rem;
+
+                        i {
+                            font-size: 0.8rem;
+                        }
+                    }
+                }
+
+            }
+
+            .profile-img {
+                min-width: 2.9375rem;
+                min-height: 2.9375rem;
+                width: 2.9375rem;
+                height: 2.9375rem;
+
+            }
+        }
+
+        .system-name {
+            margin-top: 20px;
+
+            font: {
+                size: 1.13rem;
+            }
+        }
+
+        .welcome-alert {
+            .alert {
+                font-size: 0.85rem;
+                font-weight: 400;
+            }
+        }
+
+        .portal-box {
+            .box-1 {
+                width: 160px;
+                height: 150px;
+
+                .box-img {
+                    width: 54%;
+                    height: 55%;
+                }
+
+                .box-title {
+                    font-size: 0.8rem;
+                    width: 100%;
+                }
+            }
+        }
+
+        .page-footer {
+            .footer-text {
+                font-size: 0.75rem;
+            }
+
+        }
+    }
+}
+
+@media (min-width: 481px) and (max-width: 680px) {
+    .portal {
+
+        .logo {
+            img {
+                width: 62px;
+                height: 57px
+            }
+        }
+
+        .profile {
+            .profile-info {
+                font-size: 0.85rem;
+
+                .more {
+
+                    li {
+                        font-size: 0.85rem;
+
+                        i {
+                            font-size: 0.85rem;
+                        }
+                    }
+                }
+
+            }
+
+            .profile-img {
+                min-width: 3.125rem;
+                min-height: 3.125rem;
+                width: 3.125rem;
+                height: 3.125rem;
+
+            }
+        }
+
+        .system-name {
+            margin-top: 20px;
+
+            font: {
+                size: 1.16rem;
+            }
+        }
+
+        .welcome-alert {
+            .alert {
+                font-size: 0.87rem;
+                font-weight: 500;
+            }
+        }
+
+        .portal-box {
+            .box-1 {
+                width: 170px;
+                height: 160px;
+                margin-right: 5px;
+
+                .box-img {
+                    width: 54%;
+                    height: 55%;
+                }
+
+                .box-title {
+                    font-size: 0.85rem;
+                    width: 100%;
+                }
+            }
+        }
+
+        .page-footer {
+            .footer-text {
+                font-size: 0.75rem;
+            }
+
+        }
+    }
+}
+
+@media (min-width: 681px) and (max-width: 1000px) {
+    .portal {
+
+        .logo {
+            img {
+                width: 4.125rem;
+                height: 3.8125rem
+            }
+        }
+
+        .profile {
+            .profile-info {
+                font-size: 0.855rem;
+
+                .more {
+
+                    li {
+                        font-size: 0.855rem;
+
+                        i {
+                            font-size: 0.855rem;
+                        }
+                    }
+                }
+
+            }
+
+            .profile-img {
+                min-width: 3.3125rem;
+                min-height: 3.3125rem;
+                width: 3.3125rem;
+                height: 3.3125rem;
+
+            }
+        }
+
+        .system-name {
+            margin-top: 20px;
+
+            font: {
+                size: 1.17rem;
+            }
+        }
+
+        .welcome-alert {
+            .alert {
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+        }
+
+        .portal-box {
+            .box-1 {
+                width: 180px;
+                height: 170px;
+                margin-right: 5px;
+
+                .box-img {
+                    width: 54%;
+                    height: 55%;
+                }
+
+                .box-title {
+                    font-size: 0.855rem;
+                    width: 100%;
+                }
+            }
+        }
+
+        .page-footer {
+            .footer-text {
+                font-size: 0.78rem;
+            }
+
+        }
+    }
+}
+
+/*==============
+Dashboard Content
+=================*/
+.sidebar-div {
+    .col-md-10 {
+        margin-top: 4.3rem !important;
+        margin-bottom: -2.5rem !important;
+
+        .content {
+
+            .additem {
+                button {
+                    border-radius: 0.3125rem;
+                }
+
+            }
+
+            .third-box {
+                .filter {
+                    select {
+                        font-size: 0.7813rem;
+                        padding: 0 2px;
+                    }
+
+                }
+
+                .table {
+
+                    th {
+                        font-size: 0.875rem;
+                        padding-top: 7px;
+                        padding-bottom: 7px;
+
+                    }
+
+                    td {
+                        font-size: 0.8438rem;
+                        padding-top: 5px;
+                        padding-bottom: 5px;
+
+                    }
+
+                }
+
+            }
+        }
+    }
+}

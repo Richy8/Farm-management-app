@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Themify Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.min.css">
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="{{url_for('static', filename='wt-css/wt-main.css')}}">
+    <link rel="icon" href="{{url_for('static', filename='wt-design/favicon.png')}}">
+
+    {% if title %}
+    <title>{{ title }} - Management System</title>
+    {% else %}
+    <title>Management System</title>
+    {% endif %}
+
+</head>
+
+<body>
+
+    <div class="view full-bg"
+        style="background-image: url(../static/wt-img/choose2.jpg); background-attachment: fixed; background-repeat: no-repeat; background-size: cover; background-position: center center; z-index: -9">
+
+        <!-- Mask -->
+        <div class="mask rgba-black-strong d-flex justify-content-center align-items-center"></div>
+
+        <!-- Header -->
+        <div class="container-fluid aqua-gradient z-depth-1-half">
+            <div class="row">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12 py-3">
+                            <div class="brand d-flex">
+                                <img src="{{url_for('static', filename='wt-design/favicon.png')}}" class="img"
+                                    alt="logo">
+                                &nbsp;
+                                <strong class="white-text text">County Choice Farms</strong>
+                                <span class="tag white-text font-weight-light">Management System 1.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="container form-container">
+            <div class="row">
+                <div class="container ">
+                    <div class="row">
+                        {% block formcontent %}
+
+                        {% endblock formcontent %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer id="loginFooter">
+            <div class="page-footer">
+                <div class="footer-copyright d-flex">
+                    <span class="font-small text-center">@2019 All Rights Reserved | Developed by WebTekNg</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts Goes Here -->
+    <script src="{{url_for('static', filename='wt-js/main-dist.js')}}"></script>
+    <script>
+        //Handle Form Resubmission
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+    <!-- Scripts Goes Here -->
+
+</body>
+
+</html>

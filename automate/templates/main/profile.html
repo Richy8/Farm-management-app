@@ -1,0 +1,106 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/fields.html" import profile_form %}
+{% from "macros/sidenav.html" import profile with context %}
+
+{% block sidenav %}
+{{ profile() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome
+                    {% if current_user.firstname %}
+                    {{ current_user.firstname +" "+ current_user.lastname }}
+                    {% else %}
+                    {{ current_user.username }}
+                    {% endif %}
+                </h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1.0938rem">User Profile..</h5>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Profile Row -->
+        <div class="col-md-12 white mt-3 py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="teal-text font-small">You can update your profile here</div>
+                {{ form.csrf_token }}
+
+                <!-- Firstname -->
+                {{ profile_form(form.firstname, placeholder="Enter Your Firstname") }}
+
+                <!-- Lastname -->
+                {{ profile_form(form.lastname, placeholder="Enter Your Lastname") }}
+
+                <!-- Username -->
+                {{ profile_form(form.username, placeholder="Enter Your Username") }}
+
+                <!-- Email -->
+                {{ profile_form(form.email, placeholder="Enter Your Email", disabled=disabled) }}
+
+                <!-- Role -->
+                {{ profile_form(form.role, value="Admin", disabled=disabled) }}
+
+                <!-- Profile Picture -->
+                {{ profile_form(form.picture) }}
+
+                {{ form.submit(class='form-control teal white-ic font-small') }}
+            </form>
+        </div>
+        <!-- Profile Row -->
+
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+
+{% block modal %}
+
+{% endblock modal %}

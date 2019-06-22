@@ -1,0 +1,255 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import eggstore with context %}
+
+{% block sidenav %}
+{{ eggstore() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title mt-2">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Egg-Store Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1rem">Egg Customers..</h5>
+            </div>
+            <div class="addcustomers wow fadeInLeft">
+                <button class="btn btn-md btn-teal white-ic z-depth-1 text-capitalize" data-toggle="modal"
+                    data-target="#addCustomer" style="border-radius: 0.9375rem; font-size: 0.6563rem"><i class="fas fa-plus"></i>
+                    &nbsp;New
+                    Customer</button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 white mt-3 py-3 z-depth-1 alert" style="position:relative;">
+            <div class="info font-small blue-grey-text pb-2 w-75">Below are the names of customers stored in database..
+            </div>
+            <a href="javascript: void(0)" class="close"
+                style="font-size:0.9375rem; position:absolute; top: 1.25rem; right: 1.25rem;"
+                data-dismiss="alert">&times;</a>
+            <div class="d-flex justify-content-around align-items-center flex-wrap">
+
+                {% if customers_list %}
+                {% for customers in customers_list %}
+                <div class="customers wow zoomIn">
+                    <button class="btn btn-sm white-ic {{ customers_colors[customers.id] }} hiddenIcons"
+                        ><i class="fas fa-edit renameButton" id="{{ customers.id }}"
+                            aria-label="Rename customer" data-toggle="modal" data-target="#renameCustomer">
+                        </i> 
+                            &nbsp; {{ customers.customer }} &nbsp;
+                        <i class="fas fa-trash deleteButton" id="{{ customers.id }}" 
+                            aria-label="Delete customer" data-toggle="modal" data-target="#deleteCustomer">
+                        </i>
+                    </button>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="blue-grey-text font-small py-3">No Customers Yet!</div>
+                {% endif %}
+
+            </div>
+        </div>
+        <!-- Second Row -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+{% block modal %}
+<!-- Add Customer -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addCustomer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">New Customer
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter details of
+                                Customer below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 newCustomer">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="new_customer">
+
+                                <!--Customers -->
+                                <div class="form-group">
+                                    <span class="blue-grey-text font-small">Customer Name</span>
+                                    <input type="text" name="customer_name" required class="form-control" placeholder="Enter Customer Name">
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">ADD
+                                        CUSTOMER</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add Customer -->
+
+<!-- Delete Customers Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="deleteCustomer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Are you sure you want to delete Customer ?
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="blue-grey-text font-small">On click of delete button, you need to wait for
+                                authorization before request will be made, thank you!</span>
+                            <div class="my-2 d-flex justify-content-around">
+
+                                <form action="" method="post">
+                                    {{ form.csrf_token }}
+                                    <input type="hidden" name="check" value="delete_customer">
+                                    
+                                    <input type="hidden" name="delete_id" id="customerDeleteId">
+
+                                    <button type="submit" class="btn btn-md bg-danger white-ic font-small"
+                                    style="border-radius: 1.25rem">Delete</button>
+                                </form>
+
+                                <button class="btn btn-md bg-warning white-ic font-small" data-dismiss="modal"
+                                    style="border-radius: 1.25rem">Cancel</button>
+
+                            </div>
+                            <span class="red-text" style="font-size: 0.75rem">Note: Delete only when necessary!!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Customers Modal -->
+
+<!-- Rename Customers Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="renameCustomer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Rename Customer
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter new customer name
+                                below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 renameCustomer">
+
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="rename_customer">
+
+                                <input type="hidden" name="name_id" id="nameId">
+
+                                <!-- Old Name -->
+                                <div class="form-group">
+                                    <div class="blue-grey-text font-small" style="font-size: 14px">Old Customer Name</div>
+                                    <input type="text" name="oldname" class="form-control mb-2" placeholder="oldname" id="oldName">
+
+                                    <span class="font-small text-danger" style="position: relative; top: -10px;">Do
+                                        not
+                                        edit the old name**</span>
+                                </div>
+
+                                <!-- New Name -->
+                                <div class="form-group">
+                                    <div class="blue-grey-text font-small" style="font-size: 14px">New Customer Name</div>
+                                    <input type="text" name="newname"  class="form-control" placeholder="Enter new customer name" id="newName">
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">RENAME</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Rename Customers Modal -->
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/eggstore-customers.js') }}"></script>
+{% endblock ajax %}

@@ -1,0 +1,206 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import feedmill with context %}
+
+{% block sidenav %}
+{{ feedmill() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to FeedMill Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1rem">Feed Production..</h5>
+            </div>
+            <div class="update">
+                <button class="btn btn-md teal white-ic" data-toggle="modal" data-target="#updateProduction"
+                    style="border-radius: 0.3125rem;"><i class="fas fa-edit"></i>&nbsp; Update</button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Box -->
+        <div class="col-md-12 white py-2 mt-2 z-depth-1 third-box">
+
+            <div class="column" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+                <div id="accordion">
+                    <div class="inner-row d-flex justify-content-between bg-success px-2 py-1">
+                        <div class="item-title d-flex align-items-center">
+                            <h6 class="white-text pt-2" style="font-size: 0.875rem">Production Input
+                                ({{ date.strftime("%b-%d") }})</h6>
+                        </div>
+                        <a href="#collapseOne" class="white-text border rounded-circle" data-toggle="collapse"
+                            style="min-width: 30px; height: 30px; position: relative"><i class="fas fa-caret-down"
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                    </div>
+                    <!-- Inner Row 1 -->
+
+                    <!-- Production Form -->
+                    <div class="collapse show production-form px-2 py-5" id="collapseOne" data-parent="#accordion">
+
+                        <div class="w-100 text-center font-small blue-grey-text">Enter Daily Production
+                            Below (<span class="text-danger">always in tonnes</span>), If a feed was not produced,
+                            simply enter
+                            0. Thank
+                            you!</div>
+
+                        <div class="p-form col-md-6 offset-md-3 py-3 mt-3"
+                            style="border: 1px solid #009688; border-radius: 5px; background:rgb(240, 240, 240);">
+                            <div class="w-100 text-center font-small teal-text mb-2">Daily Production (tonnes)</div>
+
+
+                            <form action="{{ url_for('feedmill.processproduction') }}" method="POST"
+                                class="productionForm">
+
+                                {% if feedtypes %}
+                                {% for feedtype in feedtypes %}
+                                <div class="d-flex justify-content-around align-items-center mb-2">
+                                    <label for="" class="font-small mt-1 w-25">{{ feedtype.type }}:</label>
+                                    &nbsp;
+                                    <input type="number" required class="form-control w-75" step="0.01" name="{{ feedtype.type }}"
+                                        placeholder="Enter {{ feedtype.type }} Production here..">
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="w-100 blue-grey-text font-small text-center my-3">No FeedType created yet!
+                                </div>
+                                {% endif %}
+
+                                 <!-- Submit -->
+                                 <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                 id="submitButton">SUBMIT</button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+                    <!-- Production Form -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Second Box -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+
+{% block modal %}
+<!-- Batch Update Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="updateProduction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Update FeedType Production
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter date and feed
+                                quantity(tonnes) produced for update!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2" id="updateProductionForm">
+                                {{ form2.csrf_token }}
+
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="batchUpdate">
+
+                                <div class="d-flex justify-content-around align-items-center mb-2">
+                                    <label for="" class="font-small mt-1">{{ form2.date.label.text }}:</label>
+                                    &nbsp;
+                                    {{ form2.date(class="form-control", required = required, placeholder="Enter Date (e.g 2019-04-08)") }}
+                                </div>
+
+                                <div class="w-100 text-center font-small blue-grey-text mt-3 mb-2">If feedtype was not
+                                    produced,
+                                    simply enter
+                                    0 (<span class="text-danger">always in tonnes</span>). Thank
+                                    you!</div>
+
+                                {% if feedtypes %}
+                                {% for feedtype in feedtypes %}
+                                <div class="d-flex justify-content-around align-items-center mb-2">
+                                    <label for="" class="font-small mt-1 w-25">{{ feedtype.type }}:</label>
+                                    &nbsp;
+                                    <input type="number" required class="form-control w-75" step="0.01" name="{{ feedtype.type }}"
+                                        placeholder="Enter {{ feedtype.type }} Consumption here..">
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="w-100 blue-grey-text font-small text-center my-3">No Feedtype created yet
+                                    yet!
+                                </div>
+                                {% endif %}
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">UPDATE PRODUCTION</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Batch Update Modal -->
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/feedproduction.js') }}"></script>
+{% endblock ajax %}

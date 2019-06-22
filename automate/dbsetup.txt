@@ -1,0 +1,32 @@
+from automate import db, create_app
+
+from automate.models import User, Activitylog,Feeditem, Feedstock, Feedtype, Formulation, Feedcost, Vendor, Farmitem, Purchase, Production, Receivable, Pen, Customer, Eggstock, Allocation, Eggsale, Birdstock
+
+db.create_all(app=create_app())
+
+****************
+app = create_all()
+app.app_context().push()
+*****************
+
+db.session.add(user1)
+db.session.commit()
+
+
+
+def get_reset_token(self, expires_sec=1800):
+        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+        
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

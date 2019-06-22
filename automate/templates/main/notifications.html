@@ -1,0 +1,346 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/fields.html" import render_form %}
+{% from "macros/sidenav.html" import profile with context %}
+
+
+{% block sidenav %}
+{{ profile() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+    
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title">
+                <h6 class="teal-text mt-2" style="font-size: 0.875rem">Welcome to Notifications Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1rem">Notifications..</h5>
+            </div>
+        </div>
+        <!-- First Row -->
+
+         <!-- Second Box -->
+         <div class="col-md-12 white pt-2 pb-3 mt-2 mb-4 z-depth-1 third-box">
+
+                <div class="column" style="border: 1px solid #28a745;">
+                    <!-- Inner Row 1 -->
+                    <div class="inner-row d-flex justify-content-between bg-success px-2">
+                        <div class="item-title d-flex align-items-center">
+                            <h6 class="h6-responsive white-text pt-2" style="font-size: 14px">
+                                Users Request
+                            </h6>
+                        </div>
+                    </div>
+                    <!-- Inner Row 1 -->
+    
+                    <!-- Inner Row 2 -->
+                    <div class="filter mt-2 px-2">
+                        <form action="" method='POST' class="form-inline">
+                            <div class="d-flex justify-content-around align-items-center">
+                                <input type="hidden" name="check" value="filter">
+                                <label for="" class="blue-grey-text" style="font-size:0.875rem;">Filter By:</label>
+                                &nbsp;
+                                <!-- Month -->
+                                <select name="month" id="" class="form-control blue-grey-text" id="goMonth">
+                                    <option value="" selected disabled style="font-size:0.6875rem">-- Month --</option>
+                                    {% if month_list %}
+                                    {% for month in month_list %}
+                                    <option value="{{ month }}" style="font-size:0.6875rem"> &nbsp;&nbsp; {{ month | numberMonth }}</option>
+                                    {% endfor %}
+                                    {% else %}
+                                    <option style="font-size: 0.7188rem;" value="" disabled>No Month</option>
+                                    {% endif %}
+                                    
+                                </select>
+                                <!-- Month -->
+                                &nbsp;
+                                <!-- Year -->
+                                <select name="year" id="" class="form-control blue-grey-text" id="goYear">
+                                    <option value="" selected disabled style="font-size:0.6875rem">-- Year --</option>
+                                    {% if year_list %}
+                                    {% for year in year_list %}
+                                    <option value="{{ year }}" style="font-size:0.6875rem"> &nbsp;&nbsp; {{ year }}</option>
+                                    {% endfor %}
+                                    {% else %}
+                                    <option style="font-size: 0.7188rem;" value="" disabled>No Year</option>
+                                    {% endif %}
+    
+                                </select>
+                                <!-- Year -->
+                                &nbsp;
+                                <!-- Go -->
+                                <input type="submit" class="form-control bg-info white-ic w-auto" id="goButton"
+                                    style="font-size:0.7813rem;" value="GO">
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Inner Row 2 -->
+    
+                    <!-- Table Row -->
+                    <div class="px-2 mt-3">
+                        <table class="table w-100 table-responsive table-hover table-responsive table-striped" id="table"
+                            style="overflow: auto;">
+                            <thead class="black-text grey lighten-1 font-weight-bold w-100">
+                                {% if current_user.role == 'Admin' %}
+                                    <th width="20%" class="font-weight-bold" style="min-width:120px; font-size: 0.72rem" >Date</th>
+                                    <th width="20%" class="font-weight-bold" style="font-size: 0.72rem">Recipents</th>
+                                    <th width="45%" class="font-weight-bold" style="font-size: 0.72rem">Requests</th>
+                                    <th width="10%" class="font-weight-bold" style="font-size: 0.72rem">Status</th>
+                                {% else%}
+                                    <th width="20%" style="min-width:120px;" style="font-size: 0.72rem">Date</th>
+                                    <th width="20%" class="font-weight-bold" style="font-size: 0.72rem">Recipents</th>
+                                    <th width="70%" class="font-weight-bold" style="font-size: 0.72rem">Requests</th>
+                                    <th width="20%" class="font-weight-bold" style="font-size: 0.72rem">Status</th>
+                                {% endif %}
+
+                                {% if current_user.role == 'Admin' %}
+                                    <th width="2.5%" class="font-weight-bold" style="font-size: 0.72rem">Approve</th>
+                                    <th width="2.5%" class="font-weight-bold" style="font-size: 0.72rem">Decline</th>
+                                {% else %}
+                                {% endif %}
+
+                            </thead>
+                            <tbody class="indigo-text">
+                                
+                                {% if current_user.role == 'Admin' %}
+                                    {% if all_notifications %}
+                                        {% for notifications in all_notifications.items %}
+                                            <tr>
+                                                <td class="greenLand" style="font-size: 0.8125rem">{{ notifications.date.strftime('%d-%b-%Y') }}</td>
+                                                <td class="deep-purple-text" style="font-size: 0.8125rem">{{ notifications.user.username }}</td>
+                                                <td>{{ notifications.activity }}</td>
+                                                {% if notifications.status == 'pending' %}
+                                                    <td class="deep-orange-text" style="font-size: 0.8125rem">{{ notifications.status | capitalize }}</td>
+                                                {% else %}
+                                                    <td class="green-text" style="font-size: 0.8125rem">{{ notifications.status | capitalize }}</td>
+                                                {% endif %}
+                                                <td style="font-size: 0.8125rem">
+                                                    <form action="" method="post" class="approveForm">
+                                                        <input type="hidden" name="check" value="authorize">
+                                                        <input type="hidden" name="request_id" value="{{ notifications.id }}">
+
+                                                        {% if notifications.status == 'pending' %}
+                                                            <button type="submit" class="btn btn-sm btn-success white-ic rounded-pill py-1 px-2" id="approveButton" style="margin-top:1px; margin-bottom: 1px;">  <i class="fas fa-thumbs-up"></i> </button>
+                                                        {% else %}
+                                                            <button type="" disabled class="btn btn-sm btn-success white-ic rounded-pill py-1 px-2" id="approveButton" style="margin-top:1px; margin-bottom: 1px;">  <i class="fas fa-thumbs-up"></i> </button>
+                                                        {% endif %}
+
+                                                    </form>
+                                                </td>
+                                                <td style="font-size: 0.8125rem">
+                                                    <form action="" method="post" class="declineForm">
+                                                        <input type="hidden" name="check" value="decline">
+                                                        <input type="hidden" name="request_id" value="{{ notifications.id }}">
+
+                                                        {% if notifications.status == 'pending' %}
+                                                            <button type="submit" class="btn btn-sm btn-danger white-ic rounded-pill py-1 px-2" id="declineButton" style="margin-top:1px; margin-bottom: 1px;"> <i class="fas fa-thumbs-down"></i>  </button>
+                                                        {% else %}
+                                                            <button type="" disabled class="btn btn-sm btn-danger white-ic rounded-pill py-1 px-2" id="declineButton" style="margin-top:1px; margin-bottom: 1px;"> <i class="fas fa-thumbs-down"></i> </button>
+                                                        {% endif %}
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="7" class="teal-text text-center">
+                                                No data
+                                            </td>
+                                        </tr> 
+                                    {% endif %}
+                                {% else %}
+                                    {% if user_notifications %}
+                                        {% for notifications in user_notifications.items %}
+                                            <tr>
+                                                <td style="font-size: 0.8125rem" class="greenLand">{{ notifications.date.strftime('%d-%b-%Y') }}</td>
+                                                <td style="font-size: 0.8125rem" class="deep-purple-text">{{ notifications.user.username }}</td>
+                                                <td style="font-size: 0.8125rem">{{ notifications.activity }}</td>
+                                                {% if notifications.status == 'pending' %}
+                                                    <td style="font-size: 0.8125rem" class="deep-orange-text">{{ notifications.status | capitalize }}</td>
+                                                {% else %}
+                                                    <td style="font-size: 0.8125rem" class="green-text">{{ notifications.status | capitalize }}</td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="7" class="teal-text text-center">
+                                                No data
+                                            </td>
+                                        </tr> 
+                                    {% endif %}
+                                {% endif %}
+
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        {% if all_notifications %}
+                        <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                            <ul class="pagination">
+    
+                                {% if all_notifications.has_prev %}
+                                    <li class="page-item">
+                                        <a href="{{ url_for('users.notifications', page=all_notifications.prev_num) }}" class="page-link teal-text">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a href="" class="page-link text-muted">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+    
+                               {% for page_num in all_notifications.iter_pages()  %}
+                               {% if page_num %}
+                                {% if all_notifications.page == page_num %}
+                                    <li class=" page-item"><a href="{{ url_for('users.notifications', page=page_num) }}" class="page-link white-text border teal" style="font-size:10px;">{{ page_num }}</a></li>
+                                    {% else %}
+                                    <li class=" page-item"><a href="{{ url_for('users.notifications', page=page_num) }}" class="page-link teal-text border" style="font-size:10px;">{{ page_num }}</a></li>
+                                    {% endif %}
+                                {% else %}
+                                ...
+                                {% endif %}
+                                {% endfor %}
+    
+    
+                                {% if all_notifications.has_next %}
+                                <li class="page-item">
+                                    <a href="{{ url_for('users.notifications', page=all_notifications.next_num) }}" class="page-link teal-text">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a href="" class="page-link text-muted">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+    
+    
+                            </ul>
+                        </nav>  
+
+                        {% elif user_notifications %}
+                        <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                            <ul class="pagination">
+    
+                                {% if user_notifications.has_prev %}
+                                    <li class="page-item">
+                                        <a href="{{ url_for('users.notifications', page=user_notifications.prev_num) }}" class="page-link teal-text">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a href="" class="page-link text-muted">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+    
+                               {% for page_num in user_notifications.iter_pages()  %}
+                               {% if page_num %}
+                                {% if user_notifications.page == page_num %}
+                                    <li class=" page-item"><a href="{{ url_for('users.notifications', page=page_num) }}" class="page-link white-text border teal" style="font-size:10px;">{{ page_num }}</a></li>
+                                    {% else %}
+                                    <li class=" page-item"><a href="{{ url_for('users.notifications', page=page_num) }}" class="page-link teal-text border" style="font-size:10px;">{{ page_num }}</a></li>
+                                    {% endif %}
+                                {% else %}
+                                ...
+                                {% endif %}
+                                {% endfor %}
+    
+    
+                                {% if user_notifications.has_next %}
+                                <li class="page-item">
+                                    <a href="{{ url_for('users.notifications', page=user_notifications.next_num) }}" class="page-link teal-text">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a href="" class="page-link text-muted">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+    
+                            </ul>
+                        </nav>  
+
+                        {% else %}
+                        {% endif %}
+                        <!-- Pagination -->
+
+                    </div>
+                    <!-- Table Row -->
+                </div>
+    
+            </div>
+    
+            <!-- Second Box -->
+
+    </div>        
+</div>
+{% endblock content %}
+
+
+{% block modal %}
+
+{% endblock modal %}
+
+
+{% block ajax %}
+    <script src="{{ url_for('static', filename='wt-js/notifications.js') }}"></script>
+{% endblock ajax %}

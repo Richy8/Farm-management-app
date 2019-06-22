@@ -1,0 +1,391 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import store with context %}
+
+{% block sidenav %}
+{{ store() }}
+{% endblock sidenav %}
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title mt-2">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Store Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1rem">Feed Stock..</h5>
+            </div>
+            <div class="outflow wow fadeInLeft">
+                <button class="btn btn-md teal white-ic" data-toggle="modal" data-target="#newOutflow"
+                    style="border-radius: 0.3125rem; font-size:0.625rem"><i class="fas fa-plus"></i>&nbsp; Outflow</button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 white py-3 mt-3 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+
+                <div class="inner-row d-flex justify-content-between bg-success px-2 py-1">
+                    <div class="item-title d-flex align-items-center">
+                        <h6 class="white-text pt-2" style="font-size: 0.8125rem">
+                            {% if request.args.get('month') == None %} 
+                                {{ production_month[-1] | numberMonth }}
+                            {% else %}
+                                {{ request.args.get('month') | numberMonth }}
+                            {% endif %}
+                            Feed Stock</h6>
+                    </div>
+                </div>
+                <!-- Inner Row 1 -->
+
+                <!-- Inner Row 2 -->
+                <div class="filter mt-2 px-2 d-flex justify-content-between align-items-center flex-wrap">
+                    <form action="" method='POST' class="form-inline">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <label for="" class="blue-grey-text" style="font-size:0.8125rem;">Filter By:</label>
+                            &nbsp;
+                            <input type="hidden" name="check" value="gobutton">
+                            <!-- Month -->
+                            <select name="month" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled style="font-size:0.6875rem">-- Month --</option>
+                                {% if production_month %}
+                                    {% for month in production_month %}
+                                    <option value="{{ month }}" style="font-size:0.6875rem"> &nbsp;&nbsp; {{ month | numberMonth }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                {% endif %}
+                            </select>
+                            <!-- Month -->
+                            &nbsp;
+                            <!-- Year -->
+                            <select name="year" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled style="font-size:0.6875rem">-- Year --</option>
+                                {% if production_year %}
+                                {% for year in production_year %}
+                                    <option value="{{ year }}" style="font-size:0.6875rem"> &nbsp;&nbsp; {{ year }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                {% endif %}
+
+                            </select>
+                            <!-- Year -->
+                            &nbsp;
+                            <!-- Go -->
+                            <input type="submit" class="form-control bg-info white-ic w-auto"
+                                style="font-size:0.7813rem;" value="GO">
+                        </div>
+                    </form>
+
+                    &nbsp;&nbsp;
+
+                    <div class="d-flex justify-content-end align-items-center flex-wrap">
+                        <form action="" method="post" class="form-inline">
+                            {{ form.csrf_token }}
+                            <div class="d-flex justify-content-around align-items-center">
+                                <input type="hidden" name="check" value="feedtype_search">
+                                <select name="feedtype_select" id="" class="form-control">
+                                    <option value="">-- Feedtype --</option>
+                                    {% if feedtypes %}
+                                    {% for feed in feedtypes %}
+                                        <option value="{{ feed.id }}">&nbsp;&nbsp; {{ feed.type }}</option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                                &nbsp; 
+                                <!-- Go -->
+                                <input type="submit" class="form-control bg-info white-ic w-auto"
+                                style="font-size:0.6875rem;" value="GO">
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- Inner Row 2 -->
+
+                <!-- Table Row -->
+                <div class="px-2 mt-3">
+                    <table
+                        class="table w-100 table-responsive table-bordered table-hover table-responsive table-striped"
+                        id="table" style="overflow: auto;">
+                        <thead class="black-text grey lighten-1">
+                            <th class="font-weight-bold" width="240px" style="min-width:120px; font-size: 0.7188rem">Date</th>
+                            <th class="font-weight-bold" width="300px" style="min-width:200px; font-size: 0.7188rem">Feed Type</th>
+                            <th class="font-weight-bold" width="230px" style="min-width:110px; font-size: 0.7188rem">O_Qty (tns)</th>
+                            <th class="font-weight-bold" width="180px" style="min-width:80px; font-size: 0.7188rem">P_Qty (tns)</th>
+                            <th class="font-weight-bold" width="180px" style="min-width:80px; font-size: 0.7188rem">Is_Qty (tns)</th>
+                            <th class="font-weight-bold" width="180px" style="min-width:80px; font-size: 0.7188rem">Dept.</th>
+                            <th class="font-weight-bold" width="180px" style="min-width:80px; font-size: 0.7188rem">C_Qty (tns)</th>
+                            <th class="font-weight-bold" width="" style="min-width:80px; font-size: 0.7188rem">Edit</th>
+                        </thead>
+                        <tbody>
+
+                            <!-- Load Venddor Details -->
+                            {% if production_data %}
+                            {% for data in production_data.items %}
+                            <tr>
+                                <td style="font-size: 0.8125rem">{{ data.date }}</td>
+                                <td style="font-size: 0.8125rem">{{ data.feedtype.type }}</td>
+                                <td style="font-size: 0.8125rem">{{ data.o_qty }}</td>
+                                <td style="font-size: 0.8125rem">{{ data.p_qty }}</td>
+                                <td style="font-size: 0.8125rem">{{ data.issued_qty }}</td>
+                                {% if data.department %}
+                                    <td style="font-size: 0.8125rem">{{ data.department }}</td>
+                                {% else %}
+                                    <td style="font-size: 0.7188rem">-- None --</td>
+                                {% endif %}
+                                <td style="font-size: 0.8125rem">{{ data.c_qty }}</td>
+                                <td>
+                                    <a href="javascript: void(0)" class="bg-success white-text px-2 py-1 edit editOutflow" id="{{ data.id }}"
+                                        style="font-size: 0.8125rem; border-radius: 0.3125rem; cursor: pointer"
+                                        data-toggle="modal" data-target="#updateStock">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center teal-text">No data</td>
+                            </tr>
+                            {% endif %}
+
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    {% if production_data %}
+                    <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                        <ul class="pagination">
+
+                            {% if production_data.has_prev %}
+                                <li class="page-item">
+                                    <a href="{{ url_for('stores.store_stock', month=request.args.get('month'), year=request.args.get('year'),  page=production_data.prev_num) }}" class="page-link teal-text">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a href="" class="page-link text-muted">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                           {% for page_num in production_data.iter_pages()  %}
+                           {% if page_num %}
+                            {% if production_data.page == page_num %}
+                                <li class=" page-item"><a href="{{ url_for('stores.store_stock', month=request.args.get('month'), year=request.args.get('year'), page=page_num) }}" class="page-link white-text teal border" style="font-size: 10px">{{ page_num }}</a></li>
+                                {% else %}
+                                <li class=" page-item"><a href="{{ url_for('stores.store_stock', month=request.args.get('month'), year=request.args.get('year'), page=page_num) }}" class="page-link teal-text border" style="font-size: 10px">{{ page_num }}</a></li>
+                                {% endif %}
+                            {% else %}
+                            ...
+                            {% endif %}
+                            {% endfor %}
+
+
+                            {% if production_data.has_next %}
+                            <li class="page-item">
+                                <a href="{{ url_for('stores.store_stock', month=request.args.get('month'), year=request.args.get('year'), page=production_data.next_num) }}" class="page-link teal-text">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a href="" class="page-link text-muted">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+
+                        </ul>
+                    </nav>  
+                    {% endif %}
+                    <!-- Pagination\'/
+                        
+                        ' -->
+
+                </div>
+                <!-- Table Row -->
+
+            </div>
+
+        </div>
+        <!-- Second Row -->
+
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+{% block modal %}
+<!-- New Outflow -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="newOutflow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Feed Outflow
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter details of
+                                feed supplied out of store below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 newOutflow">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="feed_outflow">
+
+                                <!-- Feed Type -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Feed Type</span>
+                                    <select name="feed_type_id" class="custom-select" id="" required>
+                                        <option value="" disabled selected>Select Feed Type</option>
+                                        {% if feedtypes %}
+                                        {% for feedtype in feedtypes %}
+                                            <option value="{{ feedtype.id }}">{{ feedtype.type }}</option>
+                                        {% endfor %}
+                                        {% else %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+
+                                <!-- Department -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Department</span>
+                                    <input type="text" name="department" required class="form-control" placeholder="Enter Department">
+                                </div>
+
+                                 <!-- Supply Quantity -->
+                                 <div class="form-group">
+                                    <span class="font-small blue-grey-text">Supply Quantity (tonnes)</span>
+                                    <input type="number" name="feed_qty" required step="0.01" class="form-control" placeholder="Enter Quantity Supplied">
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">SUBMIT</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New Outflow -->
+
+<!-- Update Stock -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="updateStock" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Update Feed Outflow
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter updateed details
+                                of
+                                feed supply below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 updateOutflow">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="update_feed_outflow">
+                                <input type="hidden" name="update_id" id="outflowRowId">
+
+                                <!-- Supply Quantity -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Supply Quantity</span>
+                                    <input type="number" name="update_qty" id="updateOutflowQty" required class="form-control" placeholder="Enter Quantity Supplied">
+                                </div>
+
+                                <!-- Department -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Department</span>
+                                    <input type="text" name="update_dept" id="updateOutflowDept" required class="form-control" placeholder="Enter Department">
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">UPDATE</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Update Stock -->
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/store-stock.js') }}"></script>
+{% endblock ajax %}

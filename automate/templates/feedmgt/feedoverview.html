@@ -1,0 +1,269 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/fields.html" import render_form %}
+{% from "macros/sidenav.html" import feedmill with context %}
+
+{% block sidenav %}
+{{ feedmill() }}
+{% endblock sidenav %}
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+                <span class="font-small">{{message}}</span>
+                <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+                <div class="title">
+                        <h6 class="teal-text" style="font-size: 0.875rem">Welcome to FeedMill Portal </h6>
+                </div>
+                <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                        <!-- {{ date.today() }} -->
+                        <div class="row1">
+                                <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                        </div>
+                        &nbsp;
+                        <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                                <div class="month">{{ date.strftime("%b") }}.</div>
+                                <div class="year">{{ date.year }}</div>
+                        </div>
+                        &nbsp;
+                        <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                                <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                        </div>
+                </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div id="accordion1">
+                <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                                <div>
+                                        <div class="teal-text font-weight-bold" style="font-size: 0.995rem">Feed Cost
+                                                (&#8358;)
+                                        </div>
+                                        <div class="blue-grey-text" style="font-size: 0.8rem">Current Feed Cost as at
+                                                {{ date.strftime("%d %b %Y") }}
+                                        </div>
+                                </div>
+                                <a href="#cardOne" class="teal-text rounded-circle" data-toggle="collapse" style="min-width: 30px; height: 30px; position: relative; border: 1px solid
+                                        #009688"><i class="fas fa-caret-down"
+                                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                        </div>
+                        <div class="collapse show" id="cardOne" data-parent="#accordion1">
+                                <div class="card-body d-flex align-items-center flex-wrap">
+
+                                        <!-- Load feedtype and cost -->
+                                        {% if feedcost %}
+                                        {% for feed in feedcost %}
+                                        <div class="feed mb-2 z-depth-1 border py-2 px-3 white-text wow bounceIn
+                                        {{ cost_colors[feed.feedtype.id] }}
+                                        " style="border-radius: 0.3125rem;">
+                                                <div class="text-right font-weight-bold" style="font-size:1.0625rem;">
+                                                        &#8358; {{ feed.price | numberFormat }}
+                                                </div>
+                                                <div style="font-size:0.6875rem" class="text-uppercase">
+                                                        {{ feed.feedtype.type }}</div>
+                                        </div>
+                                        &nbsp;&nbsp;&nbsp;
+
+                                        {% endfor %}
+                                        {% else %}
+                                        <div class="teal-text font-small w-100 text-center my-3">No feed created yet!
+                                        </div>
+                                        {% endif %}
+                                </div>
+                        </div>
+                </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="row">
+                <div class="col-md-6 mt-3" id="accordion2">
+                        <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                        <div>
+                                                <div class="teal-text font-weight-bold" style="font-size: 0.995rem">
+                                                        Daily Production of Feed Types
+                                                </div>
+                                                <div class="blue-grey-text" style="font-size: 0.8rem">Quantity of Feed
+                                                        added to Store as at
+                                                        {{ date.strftime("%d %b %Y") }}
+                                                </div>
+                                        </div>
+                                        <a href="#cardTwo" class="teal-text rounded-circle" data-toggle="collapse"
+                                                style="min-width: 30px; height: 30px; position: relative; border: 1px solid
+                                        #009688"><i class="fas fa-caret-down"
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                                </div>
+                                <div class="collapse show" id="cardTwo" data-parent="#accordion2">
+                                        <div class="card-body d-flex flex-wrap">
+
+                                                <!-- Load feed item and Closing Stock -->
+                                                {% if productions %}
+                                                {% for prod in productions %}
+                                                <div class="item mb-2 z-depth-1 py-1 px-4 white-text wow bounceIn {{ prod_colors[prod.feedtype_id] }}">
+                                                        <div class="font-weight-bold" style="font-size:0.9375rem">
+                                                                {{ prod.p_qty  | numberFormat}} tons</div>
+                                                        <div class="" style="font-size:0.7188rem">{{ prod.feedtype.type }} ({{ prod.c_qty }})
+                                                        </div>
+                                                </div>
+                                                &nbsp;&nbsp;
+                                                {% endfor %}
+                                                {% else %}
+                                                <div class="teal-text font-small w-100 text-center my-3">No Feed item added yet!
+                                                </div>
+                                                {% endif %}
+                                        </div>
+                                </div>
+
+                        </div>
+                </div>
+                <div class="col-md-6 mt-3" id="accordion3">
+                        <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                        <div>
+                                                <div class="teal-text font-weight-bold" style="font-size: 0.995rem">
+                                                        Closing Price of Feed
+                                                        Items
+                                                </div>
+                                                <div class="blue-grey-text" style="font-size: 0.8rem">Current Price of
+                                                        Feed Item
+                                                        in Store as at
+                                                        {{ date.strftime("%d %b %Y") }}
+                                                </div>
+                                        </div>
+                                        <a href="#cardThree" class="teal-text rounded-circle" data-toggle="collapse"
+                                                style="min-width: 30px; height: 30px; position: relative; border: 1px solid
+                                        #009688"><i class="fas fa-caret-down"
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                                </div>
+                                <div class="collapse show" id="cardThree" data-parent="#accordion3">
+                                        <div class="card-body d-flex flex-wrap">
+
+                                                <!-- Load feed item and price -->
+                                                {% if feeditems %}
+                                                {% for item in feeditems %}
+                                                <div
+                                                        class="item mb-2 z-depth-1 py-1 px-4 white-text wow bounceIn {{ price_colors[item.feeditem.id] }}">
+                                                        <div class="font-weight-bold" style="font-size:0.9375rem">
+                                                                &#8358; {{ item.c_price | round }}</div>
+                                                        <div class="" style="font-size:0.75rem">
+                                                                {{ item.feeditem.item }}
+                                                        </div>
+                                                </div>
+                                                &nbsp;&nbsp;
+                                                {% endfor %}
+                                                {% else %}
+                                                <div class="teal-text font-small w-100 text-center my-3">No Feed item
+                                                        added yet!
+                                                </div>
+                                                {% endif %}
+                                        </div>
+                                </div>
+
+                        </div>
+                </div>
+        </div>
+        <!-- Second Row -->
+
+        <!-- Fourth Box -->
+        <div class="row mt-3 mb-5">
+                <div class="col-md-4" id="accordion4">
+                        <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                        <div>
+                                                <div class="teal-text font-weight-bold" style="font-size: 0.995rem">
+                                                        FeedMill Overhead
+                                                </div>
+                                                <div class="blue-grey-text" style="font-size: 0.8rem">Cost of Production
+                                                        <span>&nbsp;<i class="fas fa-edit text-info" style="cursor: pointer"
+                                                                        data-toggle="modal"
+                                                                        data-target="#overheadCost"></i></span>
+                                                </div>
+                                        </div>
+                                        <a href="#cardFour" class="teal-text rounded-circle" data-toggle="collapse"
+                                                style="min-width: 30px; height: 30px; position: relative; border: 1px solid
+                                        #009688;"><i class="fas fa-caret-down"
+                                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                                </div>
+                                <div class="collapse show" id="cardFour" data-parent="#accordion4">
+                                        <div class="card-body">
+                                                <div class="cost w-100 text-center teal-text font-weight-bold"
+                                                        style="font-size: 1.25rem;">
+                                                        &#8358;
+                                                        {{ output }}
+                                                        <div class="blue-grey-text mt-2 font-weight-light"
+                                                                style="font-size:12px">Cost of
+                                                                Production per feed produced
+                                                        </div>
+                                                </div>
+
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+        <!-- Fourth Box -->
+</div>
+{% endblock content %}
+
+{% block modal %}
+<!-- Overhead Cost -->
+<div class="container">
+        <div class="row">
+                <div class="col-md-10 offset-md-2">
+                        <div class="modal fade top" id="overheadCost" tabindex="-1" role="dialog"
+                                aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="true">
+                                <div class="modal-dialog modal-top modal-notify" role="document">
+                                        <div class="modal-content">
+                                                <div class="modal-header teal">
+                                                        <div class="modal-title springWood h5-responsive font-weight-bold"
+                                                                style="font-size: 0.875rem">Update Overhead Cost
+                                                        </div>
+                                                        <a href="javascript: void(0)"
+                                                                class="close white-text font-small"
+                                                                data-dismiss="modal">&times;</a>
+                                                </div>
+                                                <div class="modal-body">
+                                                        <span
+                                                                class="help-block font-small blue-grey-text font-weight-bold">Enter
+                                                                the current cost of feed production below!
+                                                        </span>
+
+                                                        <form action="" method="POST" class="mt-2">
+                                                                {{ form.csrf_token() }}
+
+                                                                <!-- Overhead cost -->
+                                                                {{ render_form(form.overhead, placeholder='Enter Overhead Cost of Production..') }}
+
+                                                                <!-- Submit -->
+                                                                {{ form.submit(class='form-control teal white-ic font-small') }}
+                                                        </form>
+
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
+<!-- Overhead Cost -->
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{url_for('static', filename='wt-js/chart-inventory.js')}}"></script>
+{% endblock ajax %}

@@ -1,0 +1,378 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import eggstore with context %}
+
+{% block sidenav %}
+{{ eggstore() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title mt-2">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Egg-Store Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1rem">Egg Supply..</h5>
+            </div>
+            <div class="addcustomers">
+                <button class="btn btn-md btn-teal white-ic z-depth-1" data-toggle="modal"
+                    data-target="#newSupply" style="border-radius: 0.625rem; font-size:0.625rem;"><i class="fas fa-plus"></i>
+                    &nbsp;New
+                    Supply</button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 white py-3 mt-3 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+
+                <div class="inner-row d-flex justify-content-between bg-success px-2 py-1">
+                    <div class="item-title d-flex align-items-center">
+                        <h6 class="white-text pt-2" style="font-size: 0.8125rem">Egg Customer Supply</h6>
+                    </div>
+                </div>
+                <!-- Inner Row 1 -->
+
+                <!-- Inner Row 2 -->
+                <div class="filter mt-2 px-2">
+                    <form action="" method='POST' class="form-inline">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <label for="" class="blue-grey-text" style="font-size:0.875rem;">Filter By:</label>
+                            &nbsp;
+                            <input type="hidden" name="check" value="gobutton">
+                            <!-- Month -->
+                            <select name="month" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled>Month</option>
+                                <option value=""></option>
+                                <option value="" disabled>No Month</option>
+
+
+                            </select>
+                            <!-- Month -->
+                            &nbsp;
+                            <!-- Year -->
+                            <select name="year" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled>Year</option>
+
+                                <option value=""></option>
+                                <option value="" disabled>No Year</option>
+                            </select>
+                            <!-- Year -->
+                            &nbsp;
+                            <!-- Go -->
+                            <input type="submit" class="form-control bg-info white-ic w-auto"
+                                style="font-size:0.7813rem;" value="GO">
+                        </div>
+                    </form>
+                </div>
+                <!-- Inner Row 2 -->
+
+                <!-- Table Row -->
+                <div class="px-2 mt-3">
+                    <table class="table w-100 table-responsive table-hover table-responsive table-striped" id="table"
+                        style="overflow: auto;">
+                        <thead class="black-text grey lighten-1">
+                            <th class="font-weight-bold" width="240px" style="min-width:120px; font-size: 11.5008px">Date</th>
+                            <th class="font-weight-bold" width="300px" style="min-width:200px; font-size: 11.5008px">Customer</th>
+                            <th class="font-weight-bold" width="180px" style="min-width:110px; font-size: 11.5008px">O_Qty</th>
+                            <th class="font-weight-bold" width="180px" style="min-width:110px; font-size: 11.5008px">Supply</th>
+                            <th class="font-weight-bold" width="180px" style="min-width:80px; font-size: 11.5008px">Egg Bal.</th>
+                            <th class="font-weight-bold" width="130px" style="min-width:80px; font-size: 11.5008px">Egg Size</th>
+                            <th class="font-weight-bold" width="120px" style="min-width:80px; font-size: 11.5008px">Details</th>
+                            <th class="font-weight-bold" width="80px" style="min-width:80px; font-size: 11.5008px">Edit</th>
+                        </thead>
+                        <tbody>
+
+                            <!-- Load Customers Details -->
+                            <tr>
+                                <td style="font-size:0.8125rem;"></td>
+                                <td style="font-size:0.8125rem;"></td>
+                                <td style="font-size:0.8125rem;"></td>
+                                <td style="font-size:0.8125rem;"></td>
+                                <td style="font-size:0.8125rem;"></td>
+                                <td style="font-size:0.8125rem;"></td>
+                                <td>
+                                    <a href="javascript: void(0)" class="bg-primary white-text px-2 py-1 edit" id=""
+                                        style="font-size: 0.8125rem; border-radius: 0.3125rem; cursor: pointer"
+                                        data-toggle="modal" data-target="#moreDetails">More</a>
+                                </td>
+                                <td>
+                                    <a href="javascript: void(0)" class="bg-success white-text px-2 py-1 edit" id=""
+                                        style="font-size: 0.8125rem; border-radius: 0.3125rem; cursor: pointer"
+                                        data-toggle="modal" data-target="#updateSupply">Edit</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <!-- <td colspan="6" class="text-center teal-text">No data</td> -->
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Table Row -->
+            </div>
+
+        </div>
+        <!-- Second Row -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+{% block modal %}
+<!-- New Stock -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="newSupply" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">New Supply
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter supply details to
+                                customers below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 newSupply">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="new_supply">
+                                <!-- Customers -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Customer</span>
+                                    <select name="customer_name" class="custom-select" id="" required>
+                                        <option value="" disabled selected>Select Customer
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Egg Quantity -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Quantity Supplied</span>
+                                    <input type="number" name="egg_supply" required class="form-control" placeholder="Enter Quantity Supplied">
+                                </div>
+
+                                <!-- Egg Size -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Egg Size</span>
+                                    <select name="egg_size" required class="custom-select" id="">
+                                        <option value="" disabled selected>Select Egg Size</option>
+                                        <option value="pullet">Pullet</option>
+                                        <option value="small">Small</option>
+                                        <option value="small">Medium</option>
+                                        <option value="big">Big</option>
+                                    </select>
+                                </div>
+
+                                <!-- Egg Balance -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Egg
+                                        Balance</span>
+                                    <input type="number" name="egg_balance" required class="form-control mb-2" placeholder="Enter Egg Balance">
+                                </div>
+
+                                <!-- Allocation -->
+                                <div class="py-1 px-1"
+                                    style="border: 1px solid rgba(8, 190, 175, 0.774); border-radius: 0.625rem; overflow: scroll; height: 200px">
+                                    <div class='border-bottom grey-text font-weight-bold font-small pb-1'>Egg
+                                        Allocation</div>
+
+                                    <div class="form-group">
+                                        <span class="font-small blue-grey-text">Pen
+                                            1</span>
+                                        <input type="number" name="" required class="form-control mb-2" placeholder="Pen 1 allocation">
+                                    </div>
+
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">ADD
+                                        SUPPLY</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New Stock -->
+
+<!-- Update Supply -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="updateSupply" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Update Supply
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter updated supply
+                                details to
+                                customers below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 updateSupply">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="update_supply">
+                                <!-- Customers -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Customer</span>
+                                    <select name="customer_name" required class="custom-select" id="">
+                                        <option value="" disabled selected>Select Customer
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Egg Quantity -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Quantity Supplied</span>
+                                    <input type="number" name="u_egg_supply" required class="form-control mb-2" placeholder="Enter Quantity">
+                                </div>
+
+                                <!-- Egg Size -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Egg Size</span>
+                                    <select name="u_egg_bal" required class="custom-select" id="">
+                                        <option value="" disabled selected>Select Egg Size</option>
+                                        <option value="pullet">Pullet</option>
+                                        <option value="small">Small</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="big">Big</option>
+                                    </select>
+                                </div>
+
+                                <!-- Egg Balance -->
+                                <div class="form-group">
+                                    <span class="font-small blue-grey-text">Egg
+                                        Balance</span>
+                                    <input type="number" name="u_egg_bal" required class="form-control mb-2" placeholder="Enter Egg Balance">
+                                </div>
+
+                                <!-- Allocation -->
+                                <div class="py-1 px-1"
+                                    style="border: 1px solid rgba(8, 190, 175, 0.774); border-radius: 0.625rem; overflow: scroll; height: 200px">
+                                    <div class='border-bottom grey-text font-weight-bold font-small pb-1'>Egg
+                                        Allocation</div>
+
+                                    <div class="form-group">
+                                        <span class="font-small blue-grey-text">Pen
+                                            1</span>
+                                        <input type="number" name="" required class="form-control mb-2" placeholder="Pen 1 allocation">
+                                    </div>
+
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">UPDATE
+                                    SUPPLY</button>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Update Supply -->
+
+<!-- More Details -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="moreDetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Egg Allocation Details
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Distribution of Eggs to
+                                Customer across pens
+                            </span>
+
+                            <div>
+                                Goes here...
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- More Details -->
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/eggstore-supply.js') }}"></script>
+{% endblock ajax %}

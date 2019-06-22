@@ -1,0 +1,571 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import eggstore with context %}
+
+{% block sidenav %}
+{{ eggstore() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title mt-2">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Egg-Store Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-2 z-depth-1">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="title mt-2">
+                    <h5 class="elegant-ic" style="font-size: 1rem">Egg Stock..</h5>
+                </div>
+                <div class="newpurchase">
+                    <button class="btn btn-md teal white-ic" data-toggle="modal" data-target="#newPen"
+                        style="border-radius: 0.9375rem; font-size: 0.6563rem"><i class="fas fa-plus"></i>&nbsp;New Pen</button>
+                </div>
+            </div>
+            <div class="mt-1 pt-2 border-top">
+                <div class="info blue-grey-text pb-2 w-75" style="font-size: 0.8125rem">Below are the Available Egg Producing Pen in the
+                    database..
+                </div>
+                <div class="d-flex justify-content-around align-items-center flex-wrap">
+
+                    {% if pen_list %}
+                    {% for pen in pen_list %}
+                    <div class="pen">
+                        <button class="btn btn-sm white-ic hiddenIcons {{ pen_colors[pen.id] }} ">
+                            <i class="fas fa-edit renameButton" id="{{ pen.id }}"
+                                aria-label="Rename" data-toggle="modal" data-target="#renamePen">
+                            </i> 
+                                &nbsp; {{ pen.pen }} &nbsp;
+                            <i class="fas fa-trash deleteButton" id="{{ pen.id }}"      data-toggle="modal"  aria-label="delete"               data-target="#deletePen">
+                            </i>
+                        </button>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="blue-grey-text py-4" style="font-size: 0.8125rem">No pen created yet!</div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 white py-3 mt-3 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+
+                <div class="inner-row d-flex justify-content-between bg-success px-2 py-1">
+                    <div class="item-title d-flex align-items-center">
+                        <h6 class="white-text pt-2" style="font-size: 13.5px">Egg Stock (
+                            {% if request.args.get('month') == None %}
+                                {{ eggstock_month[-1] | numberMonth }}
+                            {% else %}
+                                {{ request.args.get('month') | numberMonth }}
+                            {% endif %}
+                        )</h6>
+                    </div>
+                    <div class="production">
+                        <button class="btn btn-sm bg-warning white-ic font-weight-bold" style="border-radius: 0.9375rem; font-size: 0.625rem" data-toggle="modal" data-target="#addNewStock">
+                            <i class="fas fa-plus"></i> &nbsp; New Stock
+                        </button>
+                    </div>
+                </div>
+                <!-- Inner Row 1 -->
+
+                <!-- Inner Row 2 -->
+                <div class="filter mt-2 px-2 d-flex justify-content-between align-items-center flex-wrap">
+                    <form action="" method='POST' class="form-inline">
+                        {{ form.csrf_token }}
+                        <div class="d-flex justify-content-around align-items-center">
+                            <label for="" class="blue-grey-text" style="font-size:0.875rem;">Filter By:</label>
+                            &nbsp;
+                            <input type="hidden" name="check" value="gobutton">
+                            <!-- Month -->
+                            <select name="month" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled>-- Month --</option>
+
+                                {% if eggstock_month %}
+                                {% for month in eggstock_month %}
+                                    <option value="{{ month }}">&nbsp;&nbsp;{{ month | numberMonth }}</option>
+                                {% endfor %}
+                                {% else %}
+                                <option value="" disabled>&nbsp;&nbsp;No Month</option>
+                                {% endif %}
+
+                            </select>
+                            <!-- Month -->
+                            &nbsp;
+                            <!-- Year -->
+                            <select name="year" id="" class="form-control blue-grey-text">
+                                <option value="" selected disabled>-- Year --</option>
+
+                                {% if eggstock_year %}
+                                {% for year in eggstock_year %}
+                                    <option value="{{ year }}">&nbsp;&nbsp;{{ year  }}</option>
+                                {% endfor %}
+                                {% else %}
+                                <option value="" disabled>&nbsp;&nbsp;No Year</option>
+                                {% endif %}
+                            </select>
+                            <!-- Year -->
+                            &nbsp;
+                            <!-- Go -->
+                            <input type="submit" class="form-control bg-info white-ic w-auto"
+                                style="font-size:0.6875rem;" value="GO">
+                        </div>
+                    </form>
+                     
+                    &nbsp;&nbsp;
+
+                    <div class="d-flex justify-content-end align-items-center flex-wrap">
+                        <form action="" method="post" class="form-inline">
+                            {{ form.csrf_token }}
+                            <div class="d-flex justify-content-around align-items-center">
+                                <input type="hidden" name="check" value="pen_search">
+                                <select name="pen_select" id="" class="form-control" required>
+                                    <option value="">-- Pen --</option>
+                                    {% if pen_list %}
+                                    {% for pen in pen_list %}
+                                        <option value="{{ pen.id }}">&nbsp;&nbsp; {{ pen.pen }}</option>
+                                    {% endfor %}
+                                    {% else %}
+                                        <option value="">&nbsp;&nbsp; No pen</option>
+                                   {% endif %}
+                                </select>
+                                &nbsp; 
+                                <!-- Go -->
+                                <input type="submit" class="form-control bg-info white-ic w-auto"
+                                style="font-size:11px;" value="GO">
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- Inner Row 2 -->
+
+                <!-- Table Row -->
+                <div class="px-2 mt-3">
+                    <table class="table w-100 table-responsive table-hover table-responsive table-striped" id="table"
+                        style="overflow: auto;">
+                        <thead class="black-text grey lighten-1">
+                            <th class="font-weight-bold" width="230px" style="min-width:120px; font-size:0.75rem">Date</th>
+                            <th class="font-weight-bold" width="240px" style="min-width:180px; font-size:0.75rem">Pen</th>
+                            <th class="font-weight-bold" width="130px" style="min-width:110px; font-size:0.75rem">O_Qty</th>
+                            <th class="font-weight-bold" width="150px" style="min-width:100px; font-size:0.75rem">Eggs Received</th>
+                            <th class="font-weight-bold" width="130px" style="min-width:80px; font-size:0.75rem">Sales(whole)</th>
+                            <th class="font-weight-bold" width="130px" style="min-width:80px; font-size:0.75rem">Sales(crack)</th>
+                            <th class="font-weight-bold" width="130px" style="min-width:80px; font-size:0.75rem">C_Qty</th>
+                            <th class="font-weight-bold" style="min-width:80px; font-size:0.75rem">Edit</th>
+                        </thead>
+                        <tbody>
+
+                            <!-- Load Venddor Details -->
+                            {% if eggstock_list %}
+                            {% for stock in eggstock_list.items %}
+                            <tr>
+                                <td style="font-size: 0.8125rem">{{ stock.date }}</td>
+                                <td style="font-size: 0.8125rem">{{ stock.pen.pen }}</td>
+                                <td style="font-size: 0.8125rem">{{ stock.o_qty | numberFormat }}</td>
+                                <td style="font-size: 0.8125rem">{{ stock.p_qty | numberFormat }}</td>
+                                <td style="font-size: 0.8125rem">{{ stock.sales | numberFormat }}</td>
+                                <td style="font-size: 0.8125rem">{{ stock.cracks | numberFormat }}</td>
+                                <td style="font-size: 0.8125rem">{{ stock.c_qty | numberFormat }}</td>
+                                <td>
+                                    <a href="javascript: void(0)" class="bg-success white-text px-2 py-1 editEggStock" id="{{ stock.id }}"
+                                        style="font-size: 0.75rem; border-radius: 0.3125rem; cursor: pointer"
+                                        data-toggle="modal" data-target="#updateStock">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center teal-text">No data</td>
+                            </tr>
+                            {% endif %}
+
+                        </tbody>
+                    </table>
+
+                     <!-- Pagination -->
+                     {% if eggstock_list %}
+                     <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                         <ul class="pagination">
+ 
+                             {% if eggstock_list.has_prev %}
+                                 <li class="page-item">
+                                     <a href="{{ url_for('stores.eggstore_stock', month=request.args.get('month'), year=request.args.get('year'), page=eggstock_list.prev_num) }}" class="page-link teal-text">
+                                         <span aria-hidden="true">&laquo;</span>
+                                         <span class="sr-only">Previous</span>
+                                     </a>
+                                 </li>
+                             {% else %}
+                                 <li class="page-item disabled">
+                                     <a href="" class="page-link text-muted">
+                                         <span aria-hidden="true">&laquo;</span>
+                                         <span class="sr-only">Previous</span>
+                                     </a>
+                                 </li>
+                             {% endif %}
+ 
+                            {% for page_num in eggstock_list.iter_pages()  %}
+                            {% if page_num %}
+                             {% if eggstock_list.page == page_num %}
+                                 <li class=" page-item" ><a href="{{ url_for('stores.eggstore_stock', month=request.args.get('month'), year=request.args.get('year'),  page=page_num) }}" class="page-link white-text border teal" style="font-size: 0.625rem">{{ page_num }}</a></li>
+                                 {% else %}
+                                 <li class=" page-item"><a href="{{ url_for('stores.eggstore_stock', month=request.args.get('month'), year=request.args.get('year'),  page=page_num) }}" class="page-link teal-text border" style="font-size: 0.625rem">{{ page_num }}</a></li>
+                                 {% endif %}
+                             {% else %}
+                             ...
+                             {% endif %}
+                             {% endfor %}
+ 
+ 
+                             {% if eggstock_list.has_next %}
+                             <li class="page-item">
+                                 <a href="{{ url_for('stores.eggstore_stock', month=request.args.get('month'), year=request.args.get('year'), page=eggstock_list.next_num) }}" class="page-link teal-text">
+                                     <span aria-hidden="true">&raquo;</span>
+                                     <span class="sr-only">Next</span>
+                                 </a>
+                             </li>
+                             {% else %}
+                                 <li class="page-item disabled">
+                                     <a href="" class="page-link text-muted">
+                                         <span aria-hidden="true">&raquo;</span>
+                                         <span class="sr-only">Next</span>
+                                     </a>
+                                 </li>
+                             {% endif %}
+ 
+                         </ul>
+                     </nav>  
+                     {% endif %}
+                     <!-- Pagination -->
+
+                </div>
+                <!-- Table Row -->
+            </div>
+
+        </div>
+        <!-- Second Row -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+{% block modal %}
+<!-- New Pen -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="newPen" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">New Pen
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter detail of
+                                pen below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 newPen">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="new_pen">
+                                <!--Pen -->
+                                <div class="form-group">
+                                    <span class="blue-grey-text font-small">Pen Name</span>
+                                    <input type="text" name="pen_name" required class="form-control mb-2" placeholder="Enter Pen Name">
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id='submitButton'>ADD
+                                        PEN</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New Pen -->
+
+<!-- Add Stock -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addNewStock" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">New Stock
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter details of
+                                new production below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 addStock">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="new_stock">
+                                <!-- Select Pen -->
+                                <div class="form-group">
+                                    <span class="blue-grey-text font-small">Pen Name</span>
+                                    <select name="pen_name_id" id="" class="form-control mb-3" required>
+                                        <option value="" selected disabled>Select Pen</option>
+                                        {% if pen_list %}
+                                        {% for pen in pen_list %}
+                                            <option value="{{ pen.id }}">{{ pen.pen }}</option>
+                                        {% endfor %}
+                                        {% else %}
+                                            <option value="">&nbsp;&nbsp; No pen</option>
+                                       {% endif %}
+                                    </select>
+                                </div>
+
+                                <!--Production -->
+                                <div class="form-group">
+                                    <span class="blue-grey-text font-small">Production</span>
+                                    <input type="number" name="pen_production" required class="form-control mb-2" placeholder="Enter quantity of eggs produced">
+                                </div>
+
+                                <!--Cracks -->
+                                <div class="form-group">
+                                    <span class="blue-grey-text font-small">Cracks Sold</span>
+                                    <input type="number" name="pen_cracks" class="form-control mb-2" required placeholder="Enter quantity of cracks sold">
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">ADD
+                                        STOCK</button>
+                                </div>
+
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add Stock -->
+
+<!-- Update Stock -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="updateStock" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Update Stock
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter details of
+                                updated stock below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 updateStock">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="update_eggstock">
+                                <input type="hidden" name="eggstock_row_id" id="eggStockRowId">
+
+                                <!--Production -->
+                                <div class="form-group">
+                                    <span class="blue-grey-text font-small">Production</span>
+                                    <input type="number" name="u_production" required class="form-control mb-2" id="uProduction" placeholder="Enter Production">
+                                </div>
+
+                                <!--Cracks -->
+                                <div class="form-group">
+                                    <span class="blue-grey-text font-small">Cracks Sold</span>
+                                    <input type="number" name="u_cracks" required class="form-control mb-2" id="uCracks" placeholder="Enter quantity of cracks sold">
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">UPDATE
+                                        STOCK</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Update Stock -->
+
+<!-- Delete pen Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="deletePen" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Are you sure you want to delete Pen ?
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="blue-grey-text font-small">On click of delete button, you need to wait for
+                                authorization before request will be made, thank you!</span>
+                            <div class="my-2 d-flex justify-content-around">
+
+                                <form action="" method="post">
+                                    {{ form.csrf_token }}
+                                    <input type="hidden" name="check" value="delete_pen">
+                                    <input type="hidden" name="pen_delete_id" id="penDeleteId">
+
+                                    <button type="submit" class="btn btn-md bg-danger white-ic font-small"
+                                    style="border-radius: 1.25rem">Delete</button>
+                                </form>
+                                
+
+                                <button class="btn btn-md bg-warning white-ic font-small"
+                                    style="border-radius: 1.25rem" data-dismiss="modal">Cancel</button>
+
+                            </div>
+                            <span class="red-text" style="font-size: 0.75rem">Note: Delete only when necessary!!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Pen Modal -->
+
+<!-- Rename Pen Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="renamePen" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Rename Pen
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Enter new pen name
+                                below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 renamePen">
+                                {{ form.csrf_token }}
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="rename_pen">
+
+                                <input type="hidden" name="pen_id" id=penId>
+
+                                <!-- Old Name -->
+                                <div class="form-grouo">
+                                    <div class="blue-grey-text font-small" style="font-size: 14px">Old Pen Name</div>
+                                    <input type="text" name="pen_old_name" id="penOldName" class="form-control mb-2" placeholder="oldname">
+
+                                    <span class="text-danger" style="position: relative; top: -10px; font-size: 0.7813rem">Do not
+                                        edit the old name**</span>
+                                </div>
+
+                                <!-- New Name -->
+                                <div class="form-group">
+                                    <div class="blue-grey-text font-small" style="font-size: 14px">New Pen Name</div>
+                                    <input type="text" name="pen_new_name" id="penNewName" class="form-control" placeholder="Enter new pen name">
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                        id="submitButton">RENAME</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Rename Pen Modal -->
+
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/eggstore-stock.js') }}"></script>
+{% endblock ajax %}

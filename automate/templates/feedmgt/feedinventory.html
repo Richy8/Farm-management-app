@@ -1,0 +1,510 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/fields.html" import render_form %}
+{% from "macros/sidenav.html" import feedmill with context %}
+
+{% block sidenav %}
+{{ feedmill() }}
+{% endblock sidenav %}
+
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title">
+                <h6 class="teal-text mt-2" style="font-size: 0.875rem">Welcome to FeedMill Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="elegant-ic" style="font-size: 1rem">Feed Items..</h5>
+            </div>
+            <div class="additem wow fadeInLeft">
+                <button class="btn btn-md btn-teal white-ic font-small z-depth-1" data-toggle="modal"
+                    data-target="#addItem" style="font-size: 0.625rem"><i class="fas fa-plus"></i>
+                    &nbsp;New
+                    Item</button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 white mt-3 py-3 z-depth-1 alert" style="position:relative;">
+            <div class="info font-small blue-grey-text pb-2 w-75">Below are the available feed items used in
+                production
+                currently..
+            </div>
+            <a href="javascript: void(0)" class="close"
+                style="font-size:0.9375rem; position:absolute; top: 1.25rem; right: 1.25rem;"
+                data-dismiss="alert">&times;</a>
+            <div class="d-flex justify-content-around align-items-center flex-wrap">
+
+                {% if items %}
+                {% for item in items %}
+                <div class="feeditems wow bounceIn">
+                    <a href="/feedmgt/feed_inventory?item={{ item.id }}">
+                        <button class="btn btn-md rounded white-ic {{ item_colors[item.id] }}" style="font-size: 0.6438rem">
+                            {{ item.item }}</button></a>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="blue-grey-text font-small">No Feed item yet!</div>
+                {% endif %}
+
+            </div>
+        </div>
+        <!-- Second Row -->
+
+        <!-- Third Box -->
+        <div class="col-md-12 white py-2 mt-2 z-depth-1 third-box">
+
+            <!-- Created date -->
+            {% if first_item %}
+            <span class="blue-grey-text position-relative py-2" style="font-size: 0.6875rem">Created on: 
+                {% if item_create_date %}
+                {{ item_create_date[0].feeditem.date_created.strftime("%d-%b-%Y") }}
+                {% else %}
+                {% endif %}
+            </span>
+             <!-- Created date -->
+             {% else %}
+             {% endif %}
+
+            <div class="column" style="border: 1px solid #28a745;">
+                <!-- Inner Row 1 -->
+                <div class="inner-row d-flex justify-content-between bg-success px-2">
+                    <div class="item-title d-flex align-items-center">
+                        <h6 class="h6-responsive white-text pt-2" style="font-size: 0.875rem">
+                            ( {% if request.args.get('month') == None %}
+                                {{ monthlist[-1] | numberMonth }}
+                            {% else %}
+                                {{ request.args.get('month') |numberMonth }}
+                            {% endif %} )
+
+                            {% if first_item %}
+                                {% if item_create_date %}
+                                    {{ item_create_date[0].feeditem.item }} Inventory
+                                {% else %}
+                                {% endif %}
+                            {% else %}
+                            No Inventory
+                            {% endif %}
+                        </h6>
+                    </div>
+                    <div class="rename">
+                        {% if first_item %}
+                        {% if item_create_date %}
+                        <button class="btn btn-sm btn-warning white-ic font-small z-depth-1 rename-button"
+                            data-toggle="modal" data-target="#renameItem" id="{{ item_create_date[0].feeditem_id }}"><i
+                                class="fas fa-edit"></i>
+                            &nbsp;Rename</button>
+                        {% else %}
+                        {% endif %}
+                        <span class="delete" style="cursor: pointer"><i class="fas fa-trash white-text"
+                                data-toggle="modal" data-target="#deleteFeedItem"></i></span>
+                        {% else %}
+
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Inner Row 1 -->
+
+                <!-- Inner Row 2 -->
+                <div class="filter mt-2 px-2">
+                    <form action="" method='POST' class="form-inline">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <input type="hidden" name="check" value="gobutton">
+                            <label for="" class="blue-grey-text" style="font-size:0.875rem;">Filter By:</label>
+                            &nbsp;
+                            <!-- Month -->
+                            <select name="month" id="" class="form-control blue-grey-text" id="goMonth">
+                                <option value="" selected disabled style="font-size:0.6875rem">-- Month --</option>
+                                {% if monthlist %}
+                                {% for month in monthlist %}
+                                <option style="font-size: 0.6875rem" value="{{ month }}"> &nbsp;&nbsp; {{ month | numberMonth }}</option>
+                                {% endfor %}
+                                {% else %}
+                                {% endif %}
+                            </select>
+                            <!-- Month -->
+                            &nbsp;
+                            <!-- Year -->
+                            <select name="year" id="" class="form-control blue-grey-text" id="goYear">
+                                <option value="" selected disabled style="font-size:0.6875rem">-- Year --</option>
+                                {% if yearlist %}
+                                {% for year in yearlist %}
+                                <option value="{{ year }}" style="font-size:0.6875rem"> &nbsp;&nbsp; {{ year }}</option>
+                                {% endfor %}
+                                {% else %}
+                                {% endif %}
+
+                            </select>
+                            <!-- Year -->
+                            &nbsp;
+                            <!-- Go -->
+                            <input type="submit" class="form-control bg-info white-ic w-auto" id="goButton"
+                                style="font-size:0.7813rem;" value="GO">
+                        </div>
+                    </form>
+                </div>
+                <!-- Inner Row 2 -->
+
+                <!-- Table Row -->
+                <div class="px-2 mt-3">
+                    <table class="table w-100 table-responsive table-hover table-responsive table-striped" id="table"
+                        style="overflow: auto;">
+                        <thead class="black-text grey lighten-1 font-weight-bold">
+                            <th width="210px" class="font-weight-bold" style="min-width:120px; font-size:0.72rem">Date</th>
+                            <th width="140px" class="text-right font-weight-bold" style="font-size: 0.72rem">Opn. Qty(Kg)</th>
+                            <th width="140px" class="text-right font-weight-bold" style="font-size: 0.72rem">Opn. Price(&#8358;)</th>
+                            <th width="140px" class="text-right font-weight-bold" style="font-size: 0.72rem">Pur. Qt(Kg)</th>
+                            <th width="140px" class="text-right font-weight-bold" style="font-size: 0.72rem">Prod. Qt(Kg)</th>
+                            <th width="140px" class="text-right font-weight-bold" style="font-size: 0.72rem">Cls. Qty(Kg)</th>
+                            <th width="140px" class="text-right font-weight-bold" style="font-size: 0.72rem">Cls.Price(&#8358;)</th>
+                            <th width="50px" class="text-right font-weight-bold" style="font-size: 0.72rem">Edit</th>
+                        </thead>
+                        <tbody>
+
+                            {% if first_item %}
+                            {% for item in first_item.items %}
+                            <tr>
+                                <td class="" style="font-size: 0.8125rem;">{{ item.date }}</td>
+                                <td class="text-right" style="font-size: 0.8125rem;">{{ item.o_qty | numberFormat }}</td>
+                                <td class="text-right" style="font-size: 0.8125rem;">{{ item.o_price | numberDecimal }}</td>
+                                <td class="text-right" style="font-size: 0.8125rem;">{{ item.v_qty | numberFormat }}</td>
+                                <td class="text-right" style="font-size: 0.8125rem;">{{ item.p_qty | numberFormat }}</td>
+                                <td class="text-right" style="font-size: 0.8125rem;">{{ item.c_qty | numberFormat }}</td>
+                                <td class="text-right" style="font-size: 0.8125rem;">{{ item.c_price | numberDecimal }}</td>
+                                <td style="font-size: 0.8125rem;">
+                                    <input type="button" class="border-0 bg-success white-ic  px-2 updatestock"
+                                        style="cursor: pointer; border-radius:20px;" id="{{ item.id }}" data-toggle="modal"
+                                        data-target="#updateItem" value="Edit">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="teal-text text-center">
+                                    No data
+                                </td>
+                            </tr>
+                            {% endif %}
+
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    {% if first_item %}
+                    <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                        <ul class="pagination">
+
+                            {% if first_item.has_prev %}
+                                <li class="page-item">
+                                    <a href="{{ url_for('feedmill.feedinventory', item=request.args.get('item'), month=request.args.get('month'), year=request.args.get('year'), page=first_item.prev_num) }}" class="page-link teal-text">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a href="" class="page-link text-muted">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                           {% for page_num in first_item.iter_pages()  %}
+                           {% if page_num %}
+                            {% if first_item.page == page_num %}
+                                <li class=" page-item"><a href="{{ url_for('feedmill.feedinventory', item=request.args.get('item'), month=request.args.get('month'), year=request.args.get('year'), page=page_num) }}" class="page-link white-text border teal" style="font-size:10px;">{{ page_num }}</a></li>
+                                {% else %}
+                                <li class=" page-item"><a href="{{ url_for('feedmill.feedinventory', item=request.args.get('item'), month=request.args.get('month'), year=request.args.get('year'), page=page_num) }}" class="page-link teal-text border" style="font-size:10px;">{{ page_num }}</a></li>
+                                {% endif %}
+                            {% else %}
+                            ...
+                            {% endif %}
+                            {% endfor %}
+
+
+                            {% if first_item.has_next %}
+                            <li class="page-item">
+                                <a href="{{ url_for('feedmill.feedinventory', item=request.args.get('item'), month=request.args.get('month'), year=request.args.get('year'), page=first_item.next_num) }}" class="page-link teal-text">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a href="" class="page-link text-muted">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+
+                        </ul>
+                    </nav>  
+                    {% endif %}
+                    <!-- Pagination -->
+
+                </div>
+                <!-- Table Row -->
+            </div>
+
+        </div>
+
+        <!-- Third Box -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+
+{% block modal %}
+<!-- Add item Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">New Feed
+                                Item
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter feed item name
+                                below!
+                            </span>
+
+                            <form action="{{ url_for('feedmill.feedinventory') }}" method="POST" class="mt-2"
+                                id="newItemForm">
+                                {{ form.csrf_token }}
+
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="check">
+
+                                <!-- FeedItem -->
+                                {{ render_form(form.feeditem, placeholder='Enter feed item (e.g Maize)') }}
+
+                                <fieldset class="px-2 mb-3 z-depth-1"
+                                    style="border-radius: 0.3125rem; border: 1px solid #00968794">
+                                    <legend class="font-small red-text">If no feed quantity or Price, Enter 0
+                                    </legend>
+                                    <!-- Quantity -->
+                                    {{ render_form(form.quantity, step='0.01', placeholder='Enter feed item quantity (e.g 1500)') }}
+
+                                    <!-- Unit Price -->
+                                    {{ render_form(form.unitprice, step='0.01', placeholder='Enter feed item unit price (e.g 90)') }}
+                                    <div class="help-block font-small red-text mb-2">Please confirm opening price before
+                                        adding feeditem</div>
+                                </fieldset>
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">ADD NEW
+                                    FEED ITEM</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add item Modal -->
+
+<!-- Rename Item Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="renameItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Rename Feed
+                                Item
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small blue-grey-text font-weight-bold">Enter new name of feed
+                                item below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2" id="renameItemForm">
+                                {{ form.csrf_token }}
+
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="rename">
+
+                                <input type="hidden" name="nameId" id=nameId>
+                                <!-- Old Name -->
+                                {{ render_form(form2.oldname, id="oldName") }}
+                                <span class="font-small text-danger mb-2" style="position: relative; top: -10px;">Do not
+                                    edit the old name**</span>
+                                <!-- New Name -->
+                                {{ render_form(form2.newname, id="newName", placeholder='Enter new feed item name (e.g Maize)') }}
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">RENAME</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Rename Item Modal -->
+
+<!-- Delete Feeditem button -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="deleteFeedItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Are you sure you want to delete feeditem?
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="blue-grey-text font-small">On click of delete button, you need to wait for
+                                authorization before request will be made, thank you!</span>
+                            <div class="my-2 d-flex justify-content-around">
+
+                                <!-- Authorize Form -->
+                                <form action="" method="post">
+                                    {{ form.csrf_token }}
+
+                                    {% if item_create_date %}
+                                    <input type="hidden" name="check" value="delete">
+                                    <input type="hidden" name="feeditem_id" value="{{ item_create_date[0].feeditem.id }}">
+
+                                    <button type="submit" class="btn btn-md bg-danger white-ic font-small delete-item"
+                                        style="border-radius: 1.25rem">Delete</button>
+                                    {% else %}
+                                    {% endif %}
+                                </form>
+
+                                <!-- Cancel Button -->
+                                <button class="btn btn-md bg-warning white-ic font-small cancel-item"
+                                    style="border-radius: 1.25rem" data-dismiss="modal">Cancel</button>
+                            </div>
+                            <span class="red-text" style="font-size: 0.75rem">Note: Delete only when necessary!!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Feeditem button -->
+
+<!-- Update Opening Stock Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="updateItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Update Feed
+                                Item
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+
+                            <form action="{{ url_for('feedmill.update_stock') }}" method="POST" class="mt-2" id="updateItemForm">
+                                {{ form.csrf_token() }}
+                                <!-- Validator -->
+                                <input type="hidden" name="check" value="update">
+
+                                <div class="help-block text-danger mb-2" style="font-size: 14px">Only update item on date created, to avoid stock overwrite!</div>
+
+                                <input type="hidden" name="update_id" id="updateId" value="">
+                                                         
+                                <!-- Quantity -->
+                                {{ render_form(form.quantity, step='0.01', id="itemQuantity", placeholder='Enter feed item quantity (e.g 1500)') }}
+
+                                <!-- Unit Price -->
+                                {{ render_form(form.unitprice, step='0.01', id="itemPrice", placeholder='Enter feed item unit price (e.g 90)') }}
+
+                                <div class="help-block text-danger mb-2" style="font-size: 14px">Confirm opening price before
+                                    updating feeditem</div>
+
+                                <!-- Submit -->
+                                <button type="submit" class="form-control teal white-ic font-small mt-2"
+                                    id="submitButton">UPDATE</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add Opening Stock Modal -->
+{% endblock modal %}
+
+
+{% block ajax %}
+<script src="{{url_for('static', filename='wt-js/feedinventory.js')}}"></script>
+{% endblock ajax %}

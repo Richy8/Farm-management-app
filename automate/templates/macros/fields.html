@@ -1,0 +1,66 @@
+<!-- WITH ICON -->
+{% macro render_field(icon, field) %}
+<div class="form-group">
+    <div class="help-block white-text mb-1 font-small">{{ field.label.text }}</div>
+
+    <div class="input-group">
+        <div class="input-group-prepend w-100">
+            <div class="input-group-text">
+                <i class="fas fa-{{ icon }} teal-text"></i>
+            </div>
+            {{ field(class_='form-control', **kwargs)| safe }}
+        </div>
+    </div>
+    {% if field.errors %}
+    {% for error in field.errors %}
+    <div class="font-small text-danger" style="margin-top:5px; margin-bottom:-5px;">{{ error }}</div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endmacro %}
+
+<!-- WITHOUT ICON -->
+{% macro render_form(field) %}
+<div class="form-group">
+
+    <div class="help-block blue-grey-text mb-1 font-small">{{ field.label.text }}</div>
+
+    {% if field.errors %}
+    {% for error in field.errors %}
+    <div class="input-group">
+        {{ field(class_='form-control is-invalid', **kwargs)| safe }}
+    </div>
+    <div class="font-small text-danger" style="margin-top:5px; margin-bottom:-5px;">{{ error }}</div>
+    {% endfor %}
+    {% else %}
+    <div class="input-group">
+        {{ field(class_='form-control', **kwargs)| safe }}
+    </div>
+    {% endif %}
+
+</div>
+{% endmacro %}
+
+{% macro profile_form(field) %}
+<div class="form-group mt-3">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="help-block blue-grey-text mt-2 font-small">{{ field.label.text }}:</div>
+        </div>
+        <div class="col-md-9">
+            {% if field.errors %}
+            {% for error in field.errors %}
+            <div class="input-group">
+                {{ field(class_='form-control is-invalid', **kwargs)| safe }}
+            </div>
+            <div class="font-small text-danger" style="margin-top:5px; margin-bottom:-5px;">{{ error }}</div>
+            {% endfor %}
+            {% else %}
+            <div class="input-group">
+                {{ field(class_='form-control', **kwargs)| safe }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}

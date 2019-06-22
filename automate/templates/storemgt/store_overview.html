@@ -1,0 +1,232 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import store with context %}
+
+{% block sidenav %}
+{{ store() }}
+{% endblock sidenav %}
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title mt-2">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Store Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div id="accordion1">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="teal-text font-weight-bold" style="font-size: 0.9063rem">Feed Current Stock
+                        </div>
+                        <div class="blue-grey-text" style="font-size: 0.7188rem">Current stock Feed as at
+                            {{ date.strftime("%d %b %Y") }}
+                        </div>
+                    </div>
+                    <a href="#cardOne" class="teal-text rounded-circle" data-toggle="collapse" style="min-width: 30px; height: 30px; position: relative; border: 1px solid
+                                        #009688"><i class="fas fa-caret-down"
+                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                </div>
+                <div class="collapse show" id="cardOne" data-parent="#accordion1">
+                    <div class="card-body d-flex align-items-center flex-wrap">
+
+                        <!-- Load feedtype and cost -->
+                        {% if closing_production %}
+                        {% for feed in closing_production %}
+                        <div class="feed mb-2 z-depth-1 border py-2 px-3 white-text
+                                      wow zoomIn {{ prod_colors[feed.feedtype_id] }}" style="border-radius: 0.3125rem;">
+                            <div class="text-right font-weight-bold" style="font-size:0.9375rem;">
+                                {{ feed.c_qty | tonnesToBag}} bags
+                            </div>
+                            <div style="font-size:0.6875rem" class="text-uppercase">
+                                {{ feed.feedtype.type }}</div>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;
+                        {% endfor %}
+                        {% else %}
+                            <div class="teal-text font-small w-100 text-center my-3">No feed created yet!
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="row">
+            <div class="col-md-6 mt-3" id="accordion2">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="teal-text font-weight-bold" style="font-size: 0.9063rem">
+                                Feed Items
+                            </div>
+                            <div class="blue-grey-text" style="font-size: 0.7188rem">Available Feed Items
+                                in Store and their prices as at
+                                {{ date.strftime("%d %b %Y") }}
+                            </div>
+                        </div>
+                        <a href="#cardTwo" class="teal-text rounded-circle" data-toggle="collapse" style="min-width: 30px; height: 30px; position: relative; border: 1px solid
+                                        #009688"><i class="fas fa-caret-down"
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                    </div>
+                    <div class="collapse show" id="cardTwo" data-parent="#accordion2">
+                        <div class="card-body d-flex flex-wrap">
+
+                            <!-- Load feed item and Closing Price -->
+                            {% if all_feedstock %}
+                            {% for stock in all_feedstock %}
+                            <div class="item mb-2 z-depth-1 py-1 px-4 white-text wow zoomIn {{ stock_colors_price[stock.feeditem_id] }}">
+                                <div class=" font-weight-bold" style="font-size:0.875rem">
+                                    &#8358; {{ stock.c_price }}</div>
+                                <div class="" style="font-size:0.75rem">{{ stock.feeditem.item }}
+                                </div>
+                            </div>
+                            &nbsp;&nbsp;
+                            {% endfor %}
+                            {% else %}
+                            <div class="teal-text font-small w-100 text-center my-3">No Feed item
+                                 added yet!
+                             </div>
+                             {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-6 mt-3" id="accordion3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="teal-text font-weight-bold" style="font-size: 0.9063rem">
+                                Farm Items
+                            </div>
+                            <div class="blue-grey-text" style="font-size: 0.7188rem">Available Farm Items
+                                in Store and their prices as at
+                                {{ date.strftime("%d %b %Y") }}
+                            </div>
+                        </div>
+                        <a href="#cardThree" class="teal-text rounded-circle" data-toggle="collapse" style="min-width: 30px; height: 30px; position: relative; border: 1px solid
+                                        #009688"><i class="fas fa-caret-down"
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                    </div>
+                    <div class="collapse show" id="cardThree" data-parent="#accordion3">
+                        <div class="card-body d-flex flex-wrap">
+
+                            <!-- Load feed item and price -->
+                            {% if all_farmitem %}
+                            {% for item in all_farmitem %}
+                            <div class="item mb-2 z-depth-1 py-1 px-4 white-text wow zoomIn {{ farmitem_colors[item.farmitem_id] }}">
+                                <div class="font-weight-bold" style="font-size:0.875rem">
+                                    &#8358; {{ item.v_price }}</div>
+                                <div class="" style="font-size:0.75rem">
+                                    {{ item.farmitem.item }}
+                                </div>
+                            </div>
+                            &nbsp;&nbsp;
+                            {% endfor %}
+                            {% else %}
+                                <div class="teal-text font-small w-100 text-center my-3">No Feed item
+                                    added yet!
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- Second Row -->
+
+        <!-- Third Row -->
+        <div id="accordion4" class="mt-3 mb-4 pb-3">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="teal-text font-weight-bold" style="font-size: 0.9063rem">Closing Stock of Feed Items
+                        </div>
+                        <div class="blue-grey-text" style="font-size: 0.7188rem">Current Closing
+                            Stock of
+                            Feed Item
+                            in Store as at
+                            {{ date.strftime("%d %b %Y") }}
+                        </div>
+                    </div>
+                    <a href="#cardFour" class="teal-text rounded-circle" data-toggle="collapse" style="min-width: 30px; height: 30px; position: relative; border: 1px solid
+                                        #009688"><i class="fas fa-caret-down"
+                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></a>
+                </div>
+                <div class="collapse show" id="cardFour" data-parent="#accordion4">
+                    <div class="card-body d-flex align-items-center flex-wrap">
+
+                    <!-- Load feed item and Closing qty -->
+                    {% if all_feedstock %}
+                    {% for qty in all_feedstock %}
+                    <div class="item mb-2 z-depth-1 py-1 px-4 white-text wow zoomIn {{ stock_colors_qty[qty.feeditem_id] }}">
+                        <div class=" font-weight-bold" style="font-size:0.875rem">
+                            {{ qty.c_qty | numberFormat }}</div>
+                        <div class="" style="font-size:0.75rem">{{ qty.feeditem.item }}
+                        </div>
+                    </div>
+                    &nbsp;&nbsp;
+                    {% endfor %}
+                    {% else %}
+                        <div class="teal-text font-small w-100 text-center my-3">No Feed item
+                            added yet!
+                        </div>
+                    {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Third Row -->
+
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+{% block ajax %}
+<script src=""></script>
+{% endblock ajax %}
