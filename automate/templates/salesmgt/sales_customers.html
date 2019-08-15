@@ -1,0 +1,643 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import sales with context %}
+
+{% block sidenav %}
+    {{ sales() }}
+{% endblock sidenav %}
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span style="font-size:0.8438rem">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title mt-2">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Sales Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="teal-text" style="font-size: 0.9375rem">Customers..</h5>
+            </div>
+            <div class="addcustomers wow fadeInLeft">
+                <button class="btn btn-sm teal white-ic z-depth-1 text-capitalize" data-toggle="modal"
+                    data-target="#addCustomer" style="border-radius: 0.9375rem; font-size: 0.6563rem"><i class="fas fa-plus"></i>
+                    &nbsp;New
+                    Customer</button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 white py-3 mt-3 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #20c997;">
+                <!-- Inner Row 1 -->
+
+                <div class="inner-row d-flex justify-content-between teal px-2 py-1">
+                    <div class="item-title d-flex align-items-center">
+                        <h6 class="white-text pt-2" style="font-size: 0.8125rem">Customers Database</h6>
+                    </div>
+                </div>
+                <!-- Inner Row 1 -->
+
+                <!-- Inner Row 2 -->
+                <div class="filter mt-2 px-2 d-flex justify-content-between flex-wrap">
+                    <!-- Filter -->
+                    <form action="" method='POST' class="form-inline">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <label for="" class="teal-text" style="font-size:0.8125rem;">Filter By:</label>
+                            &nbsp;
+                            <input type="hidden" name="check" value="gobutton">
+                            <!-- Customer Type -->
+                            <select name="customer_type" id="" class="form-control blue-grey-text" style="font-size: 0.6875rem">
+                                <option value="" selected disabled>Customer Type</option>
+                                <option value="Bird">Bird customers</option>
+                                <option value="Egg">Egg customers</option>
+                                <option value="Crop">Crop customers</option>
+                                <option value="Manure">Manure customers</option>
+                                <option value="Others">Others</option>
+                            </select>
+                            <!-- Customer Type -->
+                            &nbsp;
+                            <!-- Go -->
+                            <input type="submit" class="form-control teal white-ic w-auto"
+                            style="font-size: 0.6875rem"" value="GO">
+                        </div>
+                    </form>
+
+                    <!-- Search by State and Region -->
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <!-- State -->
+                        <div class="state-search mr-2">
+
+                            <form action="" method='POST' class="d-flex">
+                                <input type="hidden" name="check" value="search_state">
+                                <input type="text" name="state" class="form-control mr-1" style="font-size: 0.6875rem" placeholder="Search State">
+    
+                                <input type="submit" class="form-control teal white-ic w-auto"
+                                style="font-size: 0.6875rem" value="GO">
+                            </form>
+
+                        </div>
+                        <!-- Region -->
+                        <div class="region-search">
+                            <form action="" method="post" class="d-flex">
+                                <input type="hidden" name="check" value="search_region">
+                                <select name="region" id="" class="form-control mr-1" style="font-size: 0.6875rem" >
+                                    <option value="" selected disabled>-- Search Region --</option>
+                                    <option value="North Central">North Central</option>
+                                    <option value="North East">North East</option>
+                                    <option value="North West">North West</option>
+                                    <option value="South East">South East</option>
+                                    <option value="South South">South South</option>
+                                    <option value="South West">South West</option>
+                                </select>
+    
+                                <input type="submit" class="form-control teal white-ic w-auto"
+                                style="font-size: 0.6875rem" value="GO">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Inner Row 2 -->
+
+                <!-- Table Row -->
+                <div class="px-2 mt-3">
+                    <table class="table w-100 table-responsive table-hover table-responsive table-striped table-bordered" id="table"
+                        style="overflow: auto;">
+                        <thead class="teal-text grey lighten-2">
+                            <th class="font-weight-bold" width="170px" style="min-width:150px; font-size: 0.6563rem">Customer</th>
+                            <th class="font-weight-bold" width="170px" style="min-width:170px; font-size: 0.6563rem">Address</th>
+                            <th class="font-weight-bold" width="170px" style="min-width:150px; font-size: 0.6563rem">Email</th>
+                            <th class="font-weight-bold" width="110px" style="min-width:80px; font-size: 0.6563rem">Phone No.</th>
+                            <th class="font-weight-bold" width="50px" style="min-width:50px; font-size: 0.6563rem">Gender</th>
+                            <th class="font-weight-bold" width="85px" style="min-width:50px; font-size: 0.6563rem">City</th>
+                            <th class="font-weight-bold" width="85px" style="min-width:50px; font-size: 0.6563rem">State</th>
+                            <th class="font-weight-bold" width="130px" style="min-width:80px; font-size: 0.6563rem">Type</th>
+                            <th class="font-weight-bold" width="50px" style="min-width:50px; font-size: 0.6563rem">Edit</th>
+                            <th class="font-weight-bold" width="50px" style="min-width:50px; font-size: 0.6563rem">Delete</th>
+                        </thead>
+                        <tbody>
+
+                            <!-- Load Customers Details -->
+                            {% if all_customers %}
+                            {% for customer in all_customers.items %}
+                            <tr>
+                                <td style="font-size:0.72rem;">{{ customer.customer | wordSeparator }}</td>
+                                <td style="font-size:0.72rem;">{{ customer.address }}</td>
+                                <td style="font-size:0.72rem;">
+                                    {% if customer.email %}
+                                        {{ customer.email }}
+                                    {% else %}
+                                        {{ 'Email not set' }}
+                                    {% endif %}
+                                </td>
+                                <td style="font-size:0.72rem;">{{ customer.phone }}</td>
+                                <td style="font-size:0.72rem;">{{ customer.gender }}</td>
+                                <td style="font-size:0.72rem;">{{ customer.city }}</td>
+                                <td style="font-size:0.72rem;">{{ customer.state }}</td>
+                                <td style="font-size:0.72rem;">{{ customer.customer_type }}</td>
+                                <td  class="text-center">
+                                    <a href="javascript: void(0)" class="blue-text px-2 py-1 editButton" id="{{ customer.id }}"
+                                        style="font-size: 0.72rem; cursor: pointer"
+                                        data-toggle="modal" data-target="#editCustomer"><i class="fas fa-edit"></i></a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="javascript: void(0)" class="red-text px-2 py-1 deleteButton" id="{{ customer.id }}"
+                                        style="font-size: 0.72rem; cursor: pointer"
+                                        data-toggle="modal" data-target="#deleteCustomer"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center teal-text font-small">No data</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                     <!-- Pagination -->
+                     {% if all_customers %}
+                     <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                         <ul class="pagination">
+ 
+                             {% if all_customers.has_prev %}
+                                 <li class="page-item">
+                                     <a href="{{ url_for('sales.sales_customers', page=all_customers.prev_num) }}" class="page-link teal-text">
+                                         <span aria-hidden="true">&laquo;</span>
+                                         <span class="sr-only">Previous</span>
+                                     </a>
+                                 </li>
+                             {% else %}
+                                 <li class="page-item disabled">
+                                     <a href="" class="page-link text-muted">
+                                         <span aria-hidden="true">&laquo;</span>
+                                         <span class="sr-only">Previous</span>
+                                     </a>
+                                 </li>
+                             {% endif %}
+ 
+                            {% for page_num in all_customers.iter_pages()  %}
+                            {% if page_num %}
+                             {% if all_customers.page == page_num %}
+                                 <li class=" page-item" ><a href="{{ url_for('sales.sales_customers', page=page_num) }}" class="page-link white-text rounded-circle teal" style="font-size: 0.625rem">{{ page_num }}</a></li>
+                                 {% else %}
+                                 <li class=" page-item"><a href="{{ url_for('sales.sales_customers', page=page_num) }}" class="page-link teal-text border" style="font-size: 0.625rem">{{ page_num }}</a></li>
+                                 {% endif %}
+                             {% else %}
+                             ...
+                             {% endif %}
+                             {% endfor %}
+ 
+ 
+                             {% if all_customers.has_next %}
+                             <li class="page-item">
+                                 <a href="{{ url_for('sales.sales_customers', page=all_customers.next_num) }}" class="page-link teal-text">
+                                     <span aria-hidden="true">&raquo;</span>
+                                     <span class="sr-only">Next</span>
+                                 </a>
+                             </li>
+                             {% else %}
+                                 <li class="page-item disabled">
+                                     <a href="" class="page-link text-muted">
+                                         <span aria-hidden="true">&raquo;</span>
+                                         <span class="sr-only">Next</span>
+                                     </a>
+                                 </li>
+                             {% endif %}
+ 
+ 
+                         </ul>
+                     </nav>  
+                     {% endif %}
+                     <!-- Pagination -->
+
+                </div>
+                <!-- Table Row -->
+            </div>
+
+        </div>
+        <!-- Second Row -->
+
+       
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+{% block modal %}
+<!-- Add Customer -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="addCustomer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">New Customer
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+
+                            <form action="" method="POST" class="mt-2 newCustomer">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="new_customer">
+
+                                <div class="first-page">
+
+                                    <div class="font-small teal-text border-bottom pb-1 mb-1">Enter details of
+                                            Customer below!
+                                     </div>
+    
+                                    <!--Customers -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Name:</span>
+                                        <input type="text" name="customer_name" required class="form-control" style="font-size:0.8125rem;" placeholder="Enter Customer Name">
+                                    </div>
+    
+                                    <!-- Email -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Email:</span>
+                                        <input type="email" name="customer_email" class="form-control" style="font-size:0.8125rem;" placeholder="Enter Customer Email (Optional)">
+                                    </div>
+    
+                                    <!-- Phone Number -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Phone Number:</span>
+                                        <input type="number" name="customer_phone" required class="form-control" style="font-size:0.8125rem;" placeholder="Enter Customer Phone Number">
+                                    </div>
+    
+                                    <!-- Gender -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Gender:</span>
+                                        <select name="customer_gender" id="" class="custom-select" style="font-size:0.8125rem;" required>
+                                            <option value="" disabled selected>Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+    
+                                    <!-- Customer Type -->
+                                    <div class="form-group">
+                                        <span class="teal-text font-small">Customer Type</span>
+                                        <select name="customer_type" id="" class="form-control select-checkbox select-checkbox-fa" style="font-size:0.8125rem" size="4" required multiple>
+                                            <option value="" disabled selected>Select Customer Type</option>
+                                             <option value="Egg" class="border py-1 mt-1">Egg</option>
+                                            <option value="Bird" class="border py-1 mt-1">Bird</option>
+                                            <option value="Dressed Bird" class="border py-1 pl-3 mt-1">Dressed Bird</option>
+                                            <option value="Crop" class="border py-1 mt-1">Crops</option>
+                                            <option value="Cassava"class="border py-1 pl-3 mt-1">Cassava</option>
+                                            <option value="Palms" class="border py-1 pl-3 mt-1">Palms</option>
+                                            <option value="Pineapple" class="border py-1 pl-3 mt-1">Pineapple</option>
+                                            <option value="Manure"class="border py-1 mt-1">Manure</option>
+                                            <option value="Others"class="border py-1 mt-1">Others</option>
+                                        </select>
+                                        <div class="help-block red-text mt-2 font-weight-bold" style="font-size:0.75rem">NOTE: Hold CTRL to make multiple selections</div>
+                                    </div>
+
+                                    <!-- Next Button -->
+                                    <button class="btn btn-sm btn-outline-teal rounded-10 white-text mt-1 next-button" id="nextButton">Next <i class="fas fa-angle-double-right"></i> </button>
+                                </div>
+
+
+                                <div class="second-page">
+                                    <div class="font-small teal-text border-bottom pb-1 mb-2">Enter location details below!
+                                    </div>
+
+                                    <!-- Address -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Address:</span>
+
+                                        <textarea name="customer_address" class="form-control" placeholder="Enter Customer Address" style="font-size:0.8125rem;" required></textarea>
+                                    </div> 
+
+                                    <!-- City -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">City:</span>
+                                        <input type="text" name="customer_city" class="form-control" placeholder="Enter Customer City" style="font-size:0.8125rem;" required>
+                                    </div> 
+
+                                    <!-- State -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">State:</span>
+
+                                        <select name="customer_state" id="customerState" class="custom-select" style="font-size:0.8125rem;" required>
+                                            <option value="" selected disabled>Select State</option>
+                                            <option value="Abia">Abia</option>
+                                            <option value="Adamawa">Adamawa</option>
+                                            <option value="Akwa-Ibom">Akwa-Ibom</option>
+                                            <option value="Anambra">Anambra</option>
+                                            <option value="Bauchi">Bauchi</option>
+                                            <option value="Bayelsa">Bayelsa</option>
+                                            <option value="Benue">Benue</option>
+                                            <option value="Borno">Borno</option>
+                                            <option value="Cross River">Cross River</option>
+                                            <option value="Delta">Delta</option>
+                                            <option value="Edo">Edo</option>
+                                            <option value="Ebonyi">Ebonyi</option>
+                                            <option value="Edo">Edo</option>
+                                            <option value="Ekiti">Ekiti</option>
+                                            <option value="Enugu">Enugu</option>
+                                            <option value="FCT">FCT</option>
+                                            <option value="Gombe">Gombe</option>
+                                            <option value="Imo">Imo</option>
+                                            <option value="Jigawa">Jigawa</option>
+                                            <option value="Kaduna">Kaduna</option>
+                                            <option value="Kano">Kano</option>
+                                            <option value="Katsina">Katsina</option>
+                                            <option value="Kebbi">Kebbi</option>
+                                            <option value="Kogi">Kogi</option>
+                                            <option value="Kwara">Kwara</option>
+                                            <option value="Lagos">Lagos</option>
+                                            <option value="Niger">Niger</option>
+                                            <option value="Ogun">Ogun</option>
+                                            <option value="Ondo">Ondo</option>
+                                            <option value="Osun">Osun</option>
+                                            <option value="Oyo">Oyo</option>
+                                            <option value="Plateau">Plateau</option>
+                                            <option value="Rivers">Rivers</option>
+                                            <option value="Sokoto">Sokoto</option>
+                                            <option value="Taraba">Taraba</option>
+                                            <option value="Yobe">Yobe</option>
+                                            <option value="Zamfara">Zamfara</option>
+                                        </select>
+
+                                    </div> 
+
+                                    <!-- Region -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Region:</span>
+                                        <input type="text" name="customer_region" id="customerRegion" class="form-control" placeholder="Enter Customer Region" style="font-size:0.8125rem;" required>
+                                    </div> 
+    
+                                    <!-- Prev Button -->
+                                    <button class="btn btn-sm btn-outline-teal rounded-10 white-text mt-1 prev-button" id="prevButton"><i class="fas fa-angle-double-left"></i> Prev</button>
+
+                                    <!-- SUBMIT -->
+                                    <button type="submit" class="btn btn-sm teal float-right white-ic" id="submitButton">ADD CUSTOMER <i class="fas fa-paper-plane"></i> </button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add Customer -->
+
+<!-- Delete Customers Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="deleteCustomer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Are you sure you want to delete Customer ?
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="blue-grey-text font-small">On click of delete button, you need to wait for
+                                authorization before request will be made, thank you!</span>
+                            <div class="my-2 d-flex justify-content-around">
+
+                                <form action="" method="post">
+                                    {{ form.csrf_token }}
+                                    <input type="hidden" name="check" value="delete_customer">
+                                    
+                                    <input type="hidden" name="delete_id" id="customerDeleteId">
+
+                                    <button type="submit" class="btn btn-md bg-danger white-ic font-small"
+                                    style="border-radius: 1.25rem">Delete</button>
+                                </form>
+
+                                <button class="btn btn-md bg-warning white-ic font-small" data-dismiss="modal"
+                                    style="border-radius: 1.25rem">Cancel</button>
+
+                            </div>
+                            <span class="red-text" style="font-size: 0.75rem">Note: Delete only when necessary!!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Customers Modal -->
+
+<!-- Edit Customer -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="editCustomer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Edit Customer
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+
+                            <form action="" method="POST" class="mt-2 editCustomer">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="update_customer">
+
+                                <input type="hidden" name="customer_id" id="c_id">
+
+                                <div class="first-page">
+
+                                    <div class="font-small teal-text border-bottom pb-1 mb-1">Update details of
+                                            Customer below!
+                                     </div>
+    
+                                    <!--Customers -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Name:</span>
+                                        <input type="text" name="customer_name" id="c_name" required class="form-control" style="font-size:0.8125rem;" placeholder="Enter Customer Name">
+                                    </div>
+    
+                                    <!-- Email -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Email:</span>
+                                        <input type="email" name="customer_email" class="form-control" id="c_email" style="font-size:0.8125rem;" placeholder="Enter Customer Email (Optional)">
+                                    </div>
+    
+                                    <!-- Phone Number -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Phone Number:</span>
+                                        <input type="number" name="customer_phone" required class="form-control" id="c_phone" style="font-size:0.8125rem;" placeholder="Enter Customer Phone Number">
+                                    </div>
+    
+                                    <!-- Gender -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Gender:</span>
+                                        <select name="customer_gender" class="custom-select" id="c_gender" style="font-size:0.8125rem;" required>
+                                            <option value="" disabled selected>Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+    
+                                    <!-- Customer Type -->
+                                    <div class="form-group">
+                                        <span class="teal-text font-small">Customer Type</span>
+                                        <select name="customer_type" class="form-control select-checkbox select-checkbox-fa" id="c_type" style="font-size:0.8125rem" size="4" required multiple>
+                                            <option value="" disabled selected>Select Customer Type</option>
+                                             <option value="Egg" class="border py-1 mt-1">Egg</option>
+                                            <option value="Bird" class="border py-1 mt-1">Bird</option>
+                                            <option value="Dressed Bird" class="border py-1 pl-3 mt-1">Dressed Bird</option>
+                                            <option value="Crop" class="border py-1 mt-1">Crops</option>
+                                            <option value="Cassava"class="border py-1 pl-3 mt-1">Cassava</option>
+                                            <option value="Palms" class="border py-1 pl-3 mt-1">Palms</option>
+                                            <option value="Pineapple" class="border py-1 pl-3 mt-1">Pineapple</option>
+                                            <option value="Manure"class="border py-1 mt-1">Manure</option>
+                                            <option value="Others"class="border py-1 mt-1">Others</option>
+                                        </select>
+                                        <div class="help-block red-text mt-2 font-weight-bold" style="font-size:0.75rem">NOTE: Hold CTRL to make multiple selections</div>
+                                    </div>
+
+                                    <!-- Next Button -->
+                                    <button class="btn btn-sm btn-outline-teal rounded-10 white-text mt-1 next-button" id="nextButton">Next <i class="fas fa-angle-double-right"></i> </button>
+                                </div>
+
+
+                                <div class="second-page">
+                                    <div class="font-small teal-text border-bottom pb-1 mb-2">Update location details below!
+                                    </div>
+
+                                    <!-- Address -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Address:</span>
+
+                                        <textarea name="customer_address" class="form-control" placeholder="Enter Customer Address" id="c_address" style="font-size:0.8125rem;" required></textarea>
+                                    </div> 
+
+                                    <!-- City -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">City:</span>
+                                        <input type="text" name="customer_city" class="form-control" id="c_city" placeholder="Enter Customer City" style="font-size:0.8125rem;" required>
+                                    </div> 
+
+                                    <!-- State -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">State:</span>
+
+                                        <select name="customer_state" id="updateCustomerState" class="custom-select c_state"  style="font-size:0.8125rem;" required>
+                                            <option value="" selected disabled>Select State</option>
+                                            <option value="Abia">Abia</option>
+                                            <option value="Adamawa">Adamawa</option>
+                                            <option value="Akwa-Ibom">Akwa-Ibom</option>
+                                            <option value="Anambra">Anambra</option>
+                                            <option value="Bauchi">Bauchi</option>
+                                            <option value="Bayelsa">Bayelsa</option>
+                                            <option value="Benue">Benue</option>
+                                            <option value="Borno">Borno</option>
+                                            <option value="Cross River">Cross River</option>
+                                            <option value="Delta">Delta</option>
+                                            <option value="Edo">Edo</option>
+                                            <option value="Ebonyi">Ebonyi</option>
+                                            <option value="Edo">Edo</option>
+                                            <option value="Ekiti">Ekiti</option>
+                                            <option value="Enugu">Enugu</option>
+                                            <option value="FCT">FCT</option>
+                                            <option value="Gombe">Gombe</option>
+                                            <option value="Imo">Imo</option>
+                                            <option value="Jigawa">Jigawa</option>
+                                            <option value="Kaduna">Kaduna</option>
+                                            <option value="Kano">Kano</option>
+                                            <option value="Katsina">Katsina</option>
+                                            <option value="Kebbi">Kebbi</option>
+                                            <option value="Kogi">Kogi</option>
+                                            <option value="Kwara">Kwara</option>
+                                            <option value="Lagos">Lagos</option>
+                                            <option value="Niger">Niger</option>
+                                            <option value="Ogun">Ogun</option>
+                                            <option value="Ondo">Ondo</option>
+                                            <option value="Osun">Osun</option>
+                                            <option value="Oyo">Oyo</option>
+                                            <option value="Plateau">Plateau</option>
+                                            <option value="Rivers">Rivers</option>
+                                            <option value="Sokoto">Sokoto</option>
+                                            <option value="Taraba">Taraba</option>
+                                            <option value="Yobe">Yobe</option>
+                                            <option value="Zamfara">Zamfara</option>
+                                        </select>
+
+                                    </div> 
+
+                                    <!-- Region -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Region:</span>
+                                        <input type="text" name="customer_region" id="updateCustomerRegion" class="form-control c_region" placeholder="Enter Customer Region" style="font-size:0.8125rem;" required>
+                                    </div> 
+    
+                                    <!-- Prev Button -->
+                                    <button class="btn btn-sm btn-outline-teal rounded-10 white-text mt-1 prev-button" id="prevButton"><i class="fas fa-angle-double-left"></i> Prev</button>
+
+                                    <!-- SUBMIT -->
+                                    <button type="submit" class="btn btn-sm teal float-right white-ic" id="submitButton">ADD CUSTOMER <i class="fas fa-paper-plane"></i> </button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Customer -->
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/sales_customer.js') }}"></script>
+{% endblock ajax %}

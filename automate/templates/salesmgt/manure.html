@@ -1,0 +1,585 @@
+{% extends "layout/layout2.html" %}
+{% from "macros/sidenav.html" import sales with context %}
+
+{% block sidenav %}
+    {{ sales() }}
+{% endblock sidenav %}
+
+{% block content %}
+<div class="col-md-10 offset-md-2 mt-3">
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Alert -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{category}} z-depth-1 py-2 mb-2">
+            <span class="font-small">{{message}}</span>
+            <a href="javascript:void(0)" data-dismiss="alert" class="close" style="font-size:0.9375rem;">&times;</a>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- Alert -->
+
+        <!-- Welcome Row -->
+        <div class="col-md-12 alert white mb-3 py-1 z-depth-1 d-flex justify-content-between align-items-center
+            ">
+            <div class="title mt-2">
+                <h6 class="teal-text" style="font-size: 0.875rem">Welcome to Sales Portal</h6>
+            </div>
+            <div class="datetime d-flex justify-content-around align-items-center flex-row">
+                <!-- {{ date.today() }} -->
+                <div class="row1">
+                    <div class="day teal-text" style="font-size: 1.4375rem">{{ date.day }}</div>
+                </div>
+                &nbsp;
+                <div class="row2 blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="month">{{ date.strftime("%b") }}.</div>
+                    <div class="year">{{ date.year }}</div>
+                </div>
+                &nbsp;
+                <div class="row3 font-small blue-grey-text" style="font-size: 0.8125rem">
+                    <div class="time">{{ date.strftime("%H:%M:%S") }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Welcome Row -->
+
+        <!-- First Row -->
+        <div class="col-md-12 white py-3 z-depth-1 d-flex justify-content-between align-items-center">
+            <div class="title">
+                <h5 class="teal-text font-weight-bold" style="font-size: 0.875rem">Manure Sales..</h5>
+            </div>
+            <div class="addSales wow fadeInLeft">
+                <button class="btn btn-sm teal white-ic z-depth-1" data-toggle="modal"
+                    data-target="#newSales" style="border-radius: 0.9375rem; font-size: 0.625rem"><i class="fas fa-plus"></i>
+                    &nbsp;New
+                    Sales
+                </button>
+            </div>
+        </div>
+        <!-- First Row -->
+
+        <!-- Second Row -->
+        <div class="col-md-12 mt-2 white py-3 z-depth-1 d-flex justify-content-around align-items-center">
+            <!-- Dressed Birds -->
+            {% if path == 'dressed_bird' %}
+                <a href="{{ url_for('sales.other_sales', sales_type='dressed_bird') }}" class="white-text"><button class="btn btn-sm red white-ic waves waves-ripple rounded-10">Dressed Bird</button></a>
+            {% else %}
+                <a href="{{ url_for('sales.other_sales', sales_type='dressed_bird') }}" class="white-text"><button class="btn btn-sm cyan white-ic waves waves-ripple rounded-10">Dressed Bird</button></a>
+            {% endif %}
+
+            <!-- Cracks -->
+            {% if path == 'cracks' %}
+                <a href="{{ url_for('sales.other_sales', sales_type='cracks') }}" class="white-text"><button class="btn btn-sm red white-ic waves waves-ripple rounded-10">Cracks</button></a>
+            {% else %}
+                <a href="{{ url_for('sales.other_sales', sales_type='cracks') }}" class="white-text"><button class="btn btn-sm cyan white-ic waves waves-ripple rounded-10">Cracks</button></a>
+            {% endif %}
+
+            <!-- Manure -->
+            {% if path == 'manure' %}
+                <a href="{{ url_for('sales.other_sales', sales_type='manure') }}" class="white-text"><button class="btn btn-sm red white-ic waves waves-ripple rounded-10">Manure</button></a>
+            {% else %}
+                <a href="{{ url_for('sales.other_sales', sales_type='manure') }}" class="white-text"><button class="btn btn-sm cyan white-ic waves waves-ripple rounded-10">Manure</button></a>
+            {% endif %}
+
+            <!-- Sacks -->
+            {% if path == 'sacks' %}
+                <a href="{{ url_for('sales.other_sales', sales_type='sacks') }}" class="white-text"><button class="btn btn-sm red white-ic waves waves-ripple rounded-10">Sacks</button></a>
+            {% else %}
+                <a href="{{ url_for('sales.other_sales', sales_type='sacks') }}" class="white-text"><button class="btn btn-sm cyan white-ic waves waves-ripple rounded-10">Sacks</button></a>
+            {% endif %}
+
+             <!-- Metal Scrap -->
+             {% if path == 'metal_scrap' %}
+                <a href="{{ url_for('sales.other_sales', sales_type='metal_scrap') }}" class="white-text"><button class="btn btn-sm red white-ic waves waves-ripple rounded-10">Metal Scrap</button></a>
+            {% else %}
+                <a href="{{ url_for('sales.other_sales', sales_type='metal_scrap') }}" class="white-text"><button class="btn btn-sm cyan white-ic waves waves-ripple rounded-10">Metal Scrap</button></a>
+            {% endif %}
+        </div>
+        <!-- Second Row -->
+
+        <!-- Third Row -->
+        <div class="col-md-12 white py-3 mt-3 mb-3 z-depth-1 third-box">
+
+            <div class="column mb-3" style="border: 1px solid #20c997;">
+                <!-- Inner Row 1 -->
+
+                <div class="inner-row d-flex justify-content-between teal px-2 py-1">
+                    <div class="item-title d-flex align-items-center">
+                        <h6 class="white-text pt-2" style="font-size: 0.8125rem">Manure Sales Database</h6>
+                    </div>
+
+                     <!-- Manure Cost settings -->
+                     <div class="bird-cost-settings">
+                        <span style="font-size:0.625rem;"> <a href="javascript: void(0)" class="white-text border py-1 px-2 z-depth-1" style="border-radius:0.3125rem;" data-toggle="modal" id="costSettings" data-target="#manureCostModal"><i class="fas fa-cogs"></i> &nbsp; Manure Cost</a></span>
+                    </div>
+                </div>
+                <!-- Inner Row 1 -->
+
+                <!-- Inner Row 2 -->
+                <div class="filter mt-2 px-2">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <form action="" method='POST' class="form-inline">
+                            <div class="d-flex justify-content-around align-items-center">
+                                <label for="" class="teal-text" style="font-size:0.8125rem;">Filter By:</label>
+                                &nbsp;
+                                <input type="hidden" name="check" value="gobutton">
+                                <!-- Month -->
+                                <select name="month" id="" class="form-control blue-grey-text" style="font-size: 0.6875rem">
+                                    <option value="" selected disabled style="font-size:0.6875rem">-- Month --</option>
+                                    
+                                        <option value="" style="font-size:0.6875rem"> &nbsp;&nbsp; </option>
+                                    
+                                </select>
+                                <!-- Month -->
+                                &nbsp;
+                                <!-- Year -->
+                                <select name="year" id="" class="form-control blue-grey-text" style="font-size: 0.6875rem">
+                                    <option value="" selected disabled style="font-size:0.6875rem">-- Year --</option>
+                                
+                                        <option value="" style="font-size:0.6875rem"> &nbsp;&nbsp; </option>
+                                        
+                                </select>
+                                <!-- Year -->
+                                &nbsp;
+                                <!-- Go -->
+                                <input type="submit" class="form-control teal white-ic w-auto"
+                                    style="font-size:0.7188rem;" value="GO">
+                            </div>
+                        </form>
+
+                        <!-- Bird Customers -->
+                        <form action="" method="POST" class="form-inline">
+                            <div class="d-flex justify-content-around">
+                                <input type="hidden" name="check" value="egg-customers">
+                                <select name="" id="" class="form-control blue-grey-text" style="font-size: 0.6875rem">
+                                    <option value="" disabled selected>-- Manure Customers --</option>
+                                    <option value=""></option>
+                                </select>
+                                &nbsp;
+                                <!-- Go -->
+                                <input type="submit" class="form-control teal white-ic w-auto"
+                                style="font-size:0.7188rem;" value="GO">
+                            </div>
+                        </form>
+                        <!-- Egg Customers -->
+                    </div>
+                </div>
+                <!-- Inner Row 2 -->
+
+                <!-- Table Row -->
+                <div class="px-2 mt-3">
+                    <table class="table w-100 table-responsive table-hover table-responsive table-striped table-bordered" id="table"
+                        style="overflow: auto;">
+                        <thead class="teal-text grey lighten-2">
+                            <th class="font-weight-bold" width="120px" style="min-width:100px; font-size: 0.6563rem">Date</th>
+                            <th class="font-weight-bold" width="170px" style="min-width:180px; font-size: 0.6563rem">Customer</th>
+                            <th class="font-weight-bold" width="120px" style="min-width:80px; font-size: 0.6563rem">Purchased</th>
+                            <th class="font-weight-bold" width="70px" style="min-width:50px; font-size: 0.6563rem">Quantity</th>
+                            <th class="font-weight-bold" width="80px" style="min-width:50px; font-size: 0.6563rem">Cost (&#8358;)</th>
+                            <th class="font-weight-bold" width="170px" style="min-width:60px; font-size: 0.6563rem">Payment Info</th>
+                            <th class="font-weight-bold" width="250px" style="min-width:160px; font-size: 0.6563rem">Remarks</th>
+                            <th class="font-weight-bold" width="50px" style="min-width:50px; font-size: 0.6563rem">Update</th>
+                        </thead>
+                        <tbody>
+
+                            <!-- Load Customers Details -->
+                            <tr>
+                                <td style="font-size:0.7188rem;">12-07-2019</td>
+                                <td style="font-size:0.7188rem;">Oghechi Okafor</td>
+                                <td style="font-size:0.7188rem;">Spent Layers</td>
+                                <td style="font-size:0.7188rem;">10</td>
+                                <td style="font-size:0.7188rem;">1500</td>
+                                <td style="font-size:0.7188rem;">
+                                    Payment Details.. <a href="javascript: void(0)" class="blue white-text px-2 py-1" id="" style="font-size: 0.6875rem; border-radius: 0.3125rem; cursor: pointer" data-toggle="modal" data-target="#showPaymentInfo">More</a>
+                                </td>
+                                <td style="font-size:0.7188rem;">
+                                    This is a short remark showing the.. <a href="javascript: void(0)" id=""><i class="fas fa-eye blue white-text p-1 rounded-circle" data-toggle="modal" data-target="#showRemark"></i></a>  
+                                </td>
+                                <td  class="text-center">
+                                    <a href="javascript: void(0)" class="blue-text px-2 py-1 editButton" id=""
+                                        style="font-size: 0.7188rem; cursor: pointer"
+                                        data-toggle="modal" data-target="#editSales"><i class="fas fa-edit"></i></a>
+                                </td>
+                               
+                            </tr>
+                            <!-- <tr>
+                                <td colspan="8" class="text-center teal-text">No data</td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+
+                     <!-- Pagination -->
+                    
+                     <!-- Pagination -->
+
+                </div>
+                <!-- Table Row -->
+            </div>
+
+        </div>
+        <!-- Third Row -->
+
+       
+    </div>
+    <!-- Content -->
+
+</div>
+{% endblock content %}
+
+{% block modal %}
+<!-- New Egg Sales -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="newSales" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Manure Sales
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+
+                            <form action="" method="POST" class="mt-2 newSales">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="new_customer">
+
+                                <!-- Cost Details -->
+                                <div class="cost-details">
+                                    <div class="help-block font-small teal-text w-100 border-bottom pb-1 mb-2">Enter Manure Cost Details Below!
+                                    </div>
+
+                                    <!-- Date -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Date:</span>
+                                        <input type="date" name="date" id="" class="form-control" style="font-size: 0.8125rem;" required value={{ date.strftime('%Y-%m-%d') }}>
+                                    </div>
+
+                                    <!-- Customer -->
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Customer:</span>
+                                        <select name="customer-name" id="" class="custom-select" style="font-size: 0.8125rem;">
+                                            <option value="" disabled selected>Select Customer</option>
+                                            <option value=""></option>
+                                        </select>
+                                    </div>
+
+                                     <!-- Quantity Supplied -->
+                                     <div class="form-group d-flex justify-content-between align-items-center">
+                                        <span class="teal-text font-small w-25">Quantity:</span>
+                                        <input type="number" name="quantity" id="" class="form-control" style="font-size: 0.8125rem;" placeholder="Enter Total Quantity Sold">
+                                    </div>
+
+                                    <!-- Manure type distro -->
+                                    <div class="border-bottom pb-1 w-100 blue-grey-text mb-2" style="font-size:0.875rem;">Manure Type and Cost</div>
+
+                                    {% if manure_type %}
+                                    {% for manure in manure_type %}
+                                    <div class="form-group d-flex justify-content-between align-items-center">
+                
+                                        <div class="d-flex justify-content-center align-items-center pr-2">
+                                            <span class="teal-text w-25 mr-2" style="font-size:0.8438rem;">{{manure.sales_type}}:</span>
+                                            <input type="number" name="{{manure.sales_type}}-qty" id="{{manure.sales_type}}Qty" class="form-control" style="font-size:0.8125rem;" required value=0>
+                                        </div>
+
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <span class="teal-text w-25" style="font-size:0.8438rem;">Cost:</span>
+                                            <input type="number" name="{{manure.sales_type}}-cost" id="{{manure.sales_type}}Cost" class="form-control" style="font-size:0.8125rem;" required value={{manure.cost}}>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+
+                                     <!-- Next Button -->
+                                    <button class="btn btn-sm btn-outline-teal white-text rounded-10 mt-2" id="nextButton">Next <i class="fas fa-angle-double-right"></i></button>
+                                </div>
+
+                                <!-- Payment Details -->
+                                <div class="payment-details">
+                                    <div class="help-block font-small teal-text">Enter customer payment details below!
+                                    </div>
+                                    
+                                    <span class="font-small text-muted">Total Purchase Cost: &#8358;<span class="total-purchase">0</span> </span>
+                                
+                                    <!-- Bank -->
+                                    <div class="form-group mt-3">
+                                        <span class="teal-text font-small">Bank Payment:</span>
+                                        <input type="number" name="sales-bank-payment" id="bankPayment" class="form-control" step="0.01" style="font-size: 0.8438rem;" required value=0>
+                                    </div>  
+    
+                                    <!-- Cash -->
+                                    <div class="form-group">
+                                        <span class="teal-text font-small">Cash Payment</span>
+                                        <input type="number" name="sales-cash-payment" id="cashPayment" class="form-control" style="font-size: 0.8438rem;" step="0.01" required value="0">
+                                    </div>
+
+                                        <!-- Credit -->
+                                    <div class="form-group">
+                                        <span class="teal-text font-small">Credit Purchase</span>
+                                        <input type="number" name="sales-credit-purchase" id="creditPurchase" class="form-control" style="font-size: 0.8438rem;" step="0.01" required value="0">
+                                    </div>
+
+                                        <!-- Outstanding -->
+                                    <div class="form-group" id="outstandingSection">
+                                        <span class="teal-text font-small">Outstanding Balance</span>
+                                        <input type="number" name="sales-outstanding-balance" id="outstandingBalance" class="form-control" style="font-size: 0.8438rem;" step="0.01" required value="0">
+                                    </div>
+    
+                                    <!-- Refund -->
+                                    <div class="form-group refund-section" id="refundSection">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="teal-text font-small w-75">Want a refund?</span>
+                                            <select name="refund" id="refund" class="custom-select" style="font-size: 0.75rem;">
+                                                <option value="" selected>-- Select Refund Response --</option>
+                                                <option value="No">No</option>
+                                                <option value="Yes">Yes</option>
+                                            </select>
+                                        </div>
+                                    </div>
+    
+                                     <!-- Next Button -->
+                                    <button class="btn btn-sm btn-outline-teal white-text rounded-10" id="prevButton"><i class="fas fa-angle-double-right"></i> Prev</button>
+
+                                    <!-- Submit Button -->
+                                    <button type="submit" class="btn btn-sm teal white-text float-right" id="submitButton">Submit <i class="fas fa-paper-plane"></i> </button>
+                                    
+                                </div>
+
+
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New Egg Sales -->
+
+
+<!-- Show Remark Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="showRemark" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Bird Sales Remark
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="teal-text font-small">Purchase by Oghechi Okafor, with id <span class="red-text"> ccf-1</span>, on 25-07-19</span>
+
+                                <form action="" method="post" class="remarkForm">
+                                    {{ form.csrf_token }}
+                                    <div class="form-group mt-2">
+                                        <span class="blue-grey-text font-small">Remark</span>
+
+                                        <textarea name="customer-remark" id="" style="height: 7.5rem;" class="form-control font-small" placeholder="Enter Remark Here.."></textarea>
+                                    </div>
+                                    
+                                    <!-- Update -->
+                                    <button class="btn btn-sm teal white-text float-right" id="submitButton">UPDATE <i class="fas fa-paper-plane"></i> </button>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Show Remark Modal -->
+
+
+<!-- Show Payment Info -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="showPaymentInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive font-weight-bold"
+                                style="font-size: 0.875rem">Bird Sales Payment Details
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="teal-text font-small">Payment details of purchase by Oghechi Okafor, with id <span class="red-text"> ccf-1</span>, on 25-07-19</span>
+
+                                <form action="" method="post" class="costForm">
+                                    {{ form.csrf_token }}
+
+                                    <!-- Bank -->
+                                    <div class="form-group mt-2">
+                                        <span class="blue-grey-text font-small">Bank Payment</span>
+                                        <input type="number" name="bank-pament" id="" class="form-control font-small" step="0.01" required placeholder="Enter amount paid to bank" value="0">
+                                    </div>
+
+                                    <!-- Cash -->
+                                    <div class="form-group">
+                                        <span class="blue-grey-text font-small">Cash Payment</span>
+                                        <input type="number" name="cash-payment" id="" class="form-control font-small" step="0.01" required placeholder="Enter total cash paid" value="0">
+                                    </div>
+
+                                        <!-- Debit -->
+                                    <div class="form-group">
+                                        <span class="blue-grey-text font-small">Debit Balance</span>
+                                        <input type="number" name="debit-balance" id="" class="form-control font-small" step="0.01" required placeholder="Enter total debit balance" value="0">
+                                    </div>
+
+                                        <!-- Credit -->
+                                    <div class="form-group">
+                                        <span class="blue-grey-text font-small">Credit Balance</span>
+                                        <input type="number" name="credit-balances" id="" class="form-control font-small" step="0.01" required placeholder="Enter total credit balance" value="0">
+                                    </div>
+
+                                    <!-- Update -->
+                                    <button class="btn btn-sm teal white-text float-right" id="submitButton">UPDATE <i class="fas fa-paper-plane"></i> </button>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Show Payment Info -->
+
+
+<!-- Edit Customer -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="editSales" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                                style="font-size: 0.875rem">Cusomer Details
+                            </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="help-block font-small teal-text">Update Customer details below!
+                            </span>
+
+                            <form action="" method="POST" class="mt-2 costForm">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="check" value="update_egg_sales">
+
+                                <input type="hidden" name="customer_id" id="c_id">
+                                
+                                 <!-- Date -->
+                                 <div class="form-group">
+                                    <span class="blue-grey-text font-small">Date</span>
+                                    <input type="date" name="date" id="" class="form-control font-small" required value={{ date.strftime('%Y-%m-%d') }}>
+                                </div>
+
+                                <!--Customers -->
+                                <div class="form-group">
+                                    <span class="blue-grey-text font-small">Customer</span>
+                                    <select name="customer-name" id="" class="custom-select font-small">
+                                        <option value="" disabled selected>Select Customer</option>
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+
+                                <!-- Item Purchased -->
+                                <div class="form-group">
+                                    <span class="blue-grey-text font-small">Item Purchased</span>
+                                    <input type="text" name="customer_item" required class="form-control font-small" id="" placeholder="Enter item purchased">
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <!-- Quantity -->
+                                    <div class="form-group">
+                                        <span class="font-small blue-grey-text">Item Quantity</span>
+                                        <input type="number" name="customer-bird-qty" id="" class="form-control font-small" step="0.01" value=0>
+                                    </div>
+
+                                    <!-- Cost -->
+                                    <div class="form-group">
+                                        <span class="font-small blue-grey-text">Item Cost (Per Item)</span>
+                                        <input type="number" name="customer-crop-cost" id="" step="0.01" class="form-control font-small" required placeholder="Enter unit price" value=0>
+                                    </div>
+    
+                                </div>
+
+                                <!-- Update -->
+                                <button class="btn btn-sm teal white-text float-right" id="submitButton">UPDATE <i class="fas fa-paper-plane"></i> </button>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Customer -->
+
+<!-- Bird Cost Modal -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-2">
+            <div class="modal fade top" id="manureCostModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true" data-backdrop="true">
+                <div class="modal-dialog modal-top modal-notify" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header teal">
+                            <div class="modal-title springWood h5-responsive"
+                            style="font-size: 0.875rem">Manure Cost </div>
+                            <a href="#" class="close white-text font-small" data-dismiss="modal">&times;</a>
+                        </div>
+                        <div class="modal-body">
+                            <span class="teal-text font-small">Summary of manure types and their respective cost!</span>
+
+                                <form action="" method="post" class="remarkForm">
+                                    {{ form.csrf_token }}
+
+                                    <input type="hidden" name="check" value="update_manurecost">
+
+                                        {% if manure_type %}
+                                        {% for manure in manure_type %}
+                                        <div class="form-group d-flex justify-content-center align-items-center w-100 mt-3">
+                                            <span class="teal-text font-small w-25">{{manure.sales_type}}:</span>
+                                            <input type="number" name="{{manure.sales_type}}" id="{{manure.sales_type}}CostVal" class="form-control" step="0.01" style="font-size: 0.8125rem" required value={{manure.cost}}>
+                                        </div>
+                                        {% endfor %}
+                                        {% endif %}
+
+                                    <!-- Update -->
+                                    <button class="btn btn-sm teal white-text float-right" id="submitButton">UPDATE <i class="fas fa-paper-plane"></i> </button>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bird Cost Modal -->
+
+{% endblock modal %}
+
+{% block ajax %}
+<script src="{{ url_for('static', filename='wt-js/next_prev.js') }}"></script>
+{% endblock ajax %}
